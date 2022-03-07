@@ -6,7 +6,8 @@
     "build": "node build.js",
     "test": "tap --ts",
     "lint": "eslint \"**/*.ts\"",
-    "staged": "lint-staged --allow-empty"
+    "staged": "lint-staged --allow-empty",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
