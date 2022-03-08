@@ -22,6 +22,7 @@
   "homepage": "https://github.com/Send4BR/COMClient-SDK#readme",
   "devDependencies": {
     "@types/node": "^17.0.21",
+    "@types/tap": "^15.0.6",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "esbuild": "^0.14.25",
