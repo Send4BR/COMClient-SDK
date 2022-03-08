@@ -33,7 +33,7 @@ declare module 'comclient-sdk/lib/domain/entities/message/message' {
 }
 declare module 'comclient-sdk/lib/domain/protocols/message-dispatcher' {
   export interface MessageDispatcher {
-      dispatch(message: any, topic: string): Promise<void>;
+      dispatch(message: unknown, topic: string): Promise<void>;
   }
 
 }

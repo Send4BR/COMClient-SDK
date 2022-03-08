@@ -1,3 +1,3 @@
 export interface MessageDispatcher {
- dispatch(message: any, topic: string): Promise<void>
+ dispatch(message: unknown, topic: string): Promise<void>
 }
