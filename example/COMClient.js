@@ -1,4 +1,4 @@
-import { COMClient, Email } from 'comclient-sdk'
+import { COMClient, Email } from '@aftersale/comclient-sdk'
 
 const client = new COMClient({
   provider: 'faker',
