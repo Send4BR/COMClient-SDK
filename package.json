@@ -1,5 +1,5 @@
 {
-  "name": "comclient-sdk",
+  "name": "@aftersale/comclient-sdk",
   "version": "0.0.1",
   "description": "SDK de comunicação com o COM-Service",
   "scripts": {
