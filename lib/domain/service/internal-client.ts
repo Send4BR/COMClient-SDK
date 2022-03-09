@@ -1,4 +1,4 @@
-import { SenderFactory } from '../../infra/senders/sender'
+import SenderFactory from '../../infra/senders/sender-factory'
 
 type Params = {
   provider?: string
@@ -19,13 +19,13 @@ export class COMInternal {
   }
 
   public async error(data: MessageData) {
-    const { sender } = SenderFactory.create(this.provider, this.connectionString)
+    const sender = SenderFactory.create(this.provider, this.connectionString)
 
     return await sender.dispatch(data, this.ERROR_QUEUE)
   }
 
   public async success(data: MessageData) {
-    const { sender } = SenderFactory.create(this.provider, this.connectionString)
+    const sender = SenderFactory.create(this.provider, this.connectionString)
 
     return await sender.dispatch(data, this.SUCCESS_QUEUE)
   }

@@ -102,14 +102,12 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/faker/message' {
   }
 
 }
-declare module '@aftersale/comclient-sdk/lib/infra/senders/sender' {
+declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
-  export class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string): {
-          sender: FakerMessageSender;
-      };
+  export default class SenderFactory {
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
   }
 
 }

@@ -1,5 +1,5 @@
 import { Email } from '../entities/message/email'
-import { SenderFactory } from '../../infra/senders/sender'
+import SenderFactory from '../../infra/senders/sender-factory'
 
 type ClientParams = {
   provider?: string
@@ -23,7 +23,7 @@ export class COMClient {
   }
 
   public async dispatch(message: Email) {
-    const { sender } = SenderFactory.create(this.provider, this.connectionString)
+    const sender = SenderFactory.create(this.provider, this.connectionString)
 
     await sender.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE)
   }
