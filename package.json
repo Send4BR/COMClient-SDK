@@ -9,6 +9,9 @@
     "staged": "lint-staged --allow-empty",
     "install:husky": "husky install"
   },
+  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Send4BR/COMClient-SDK.git"
