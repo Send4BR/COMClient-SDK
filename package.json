@@ -7,7 +7,7 @@
     "test": "tap --branches=0 --functions=0 --lines=0 --statements=0 --ts",
     "lint": "eslint \"**/*.ts\"",
     "staged": "lint-staged --allow-empty",
-    "prepare": "husky install"
+    "install:husky": "husky install"
   },
   "repository": {
     "type": "git",
@@ -35,10 +35,10 @@
     "npm-dts": "^1.3.11",
     "tap": "^15.1.6",
     "ts-node": "^10.6.0",
-    "typescript": "^4.6.2"
+    "typescript": "^4.6.2",
+    "eslint": "^8.10.0"
   },
   "dependencies": {
-    "@azure/service-bus": "^7.5.0",
-    "eslint": "^8.10.0"
+    "@azure/service-bus": "^7.5.0"
   }
 }
