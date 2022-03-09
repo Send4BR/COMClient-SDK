@@ -4,7 +4,7 @@
   "description": "SDK de comunicação com o COM-Service",
   "scripts": {
     "build": "node build.js",
-    "test": "tap --ts",
+    "test": "tap --branches=0 --functions=0 --lines=0 --statements=0 --ts",
     "lint": "eslint \"**/*.ts\"",
     "staged": "lint-staged --allow-empty",
     "prepare": "husky install"
