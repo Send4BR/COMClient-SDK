@@ -87,6 +87,8 @@ declare module 'comclient-sdk/lib/errors/provider-not-implemented' {
 declare module 'comclient-sdk/lib/index' {
   export * from 'comclient-sdk/lib/domain/service/client';
   export * from 'comclient-sdk/lib/domain/entities/message/email';
+  export * from 'comclient-sdk/lib/domain/service/internal-client';
+  export * from 'comclient-sdk/lib/infra/senders/faker/message';
 
 }
 declare module 'comclient-sdk/lib/infra/senders/faker/message' {
@@ -96,6 +98,7 @@ declare module 'comclient-sdk/lib/infra/senders/faker/message' {
       static sender: unknown[];
       dispatch(message: unknown, topic: string): Promise<void>;
       static get messages(): unknown[];
+      static cleanMessages(): void;
   }
 
 }
@@ -125,14 +128,16 @@ declare module 'comclient-sdk/test/domain/service/client.spec' {
   export {};
 
 }
+declare module 'comclient-sdk/test/domain/service/internal-client.spec' {
+  export {};
+
+}
 declare module 'comclient-sdk/test/entities/message/email.spec' {
   export {};
 
 }
 declare module 'comclient-sdk/test/fixtures/email' {
   const _default: {
-      clientId: string;
-      origin: string;
       message: {
           body: string;
           from: string;

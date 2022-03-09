@@ -25,7 +25,9 @@ var __toCommonJS = /* @__PURE__ */ ((cache) => {
 var lib_exports = {};
 __export(lib_exports, {
   COMClient: () => COMClient,
-  Email: () => Email
+  COMInternal: () => COMInternal,
+  Email: () => Email,
+  FakerMessageSender: () => FakerMessageSender
 });
 
 // lib/infra/senders/sender.ts
@@ -46,6 +48,9 @@ var _FakerMessageSender = class {
   }
   static get messages() {
     return this.sender;
+  }
+  static cleanMessages() {
+    this.sender = [];
   }
 };
 var FakerMessageSender = _FakerMessageSender;
@@ -126,9 +131,29 @@ var Email = class extends Message {
     this.recipient = recipient;
   }
 };
+
+// lib/domain/service/internal-client.ts
+var COMInternal = class {
+  constructor({ provider = "servicebus", connectionString }) {
+    this.ERROR_QUEUE = "message-fail";
+    this.SUCCESS_QUEUE = "message-success";
+    this.provider = provider;
+    this.connectionString = connectionString;
+  }
+  async error(data) {
+    const { sender } = SenderFactory.create(this.provider, this.connectionString);
+    return await sender.dispatch(data, this.ERROR_QUEUE);
+  }
+  async success(data) {
+    const { sender } = SenderFactory.create(this.provider, this.connectionString);
+    return await sender.dispatch(data, this.SUCCESS_QUEUE);
+  }
+};
 module.exports = __toCommonJS(lib_exports);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   COMClient,
-  Email
+  COMInternal,
+  Email,
+  FakerMessageSender
 });

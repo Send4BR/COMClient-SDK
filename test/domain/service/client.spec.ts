@@ -28,6 +28,7 @@ tap.test('should dispatch a error when provider is incorrect', async (t) => {
 })
 
 tap.test('should send a email message using fake provider', async (t) => {
+  t.before(() => FakerMessageSender.cleanMessages())
   const client = new COMClient({
     provider: 'faker',
     connectionString: 'faker_secret',

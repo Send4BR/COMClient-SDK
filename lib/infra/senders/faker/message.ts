@@ -14,4 +14,8 @@ export class FakerMessageSender implements MessageDispatcher {
   public static get messages() {
     return this.sender
   }
+
+  public static cleanMessages() {
+    this.sender = []
+  }
 }
