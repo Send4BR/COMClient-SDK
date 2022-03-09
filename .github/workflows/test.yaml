@@ -1,0 +1,30 @@
+name: "Unit Tests Coverage"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-affected:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test affected code
+        run: npm run test | sed -n '59,$p' > .github/workflows/COVERAGE_REPORT
+
+      - name: Publish results
+        uses: harupy/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: COVERAGE_REPORT
