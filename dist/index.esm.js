@@ -8,6 +8,20 @@ var ProviderNotImplemented = class extends Error {
   }
 };
 
+// lib/infra/senders/faker/message.ts
+var _FakerMessageSender = class {
+  async dispatch(message, topic) {
+    console.log("sending message to topic " + topic);
+    _FakerMessageSender.sender.push(message);
+  }
+  static get messages() {
+    return this.sender;
+  }
+};
+var FakerMessageSender = _FakerMessageSender;
+FakerMessageSender.canHandle = "faker";
+FakerMessageSender.sender = [];
+
 // lib/infra/senders/service-bus/message.ts
 var MessageServiceBusSender = class {
   constructor(client) {
@@ -28,26 +42,28 @@ var MessageServiceBusSender = class {
     }
   }
 };
+MessageServiceBusSender.canHandle = "servicebus";
 
 // lib/infra/senders/sender.ts
-var SenderFactory = class {
-  static createClient(provider, connectionString) {
-    const client = {
-      servicebus: new ServiceBusClient(connectionString)
-    }[provider];
-    if (!client)
-      throw new ProviderNotImplemented(provider);
-    return client;
-  }
-  static createDispatcher(provider) {
-    const sender = {
-      servicebus: MessageServiceBusSender
-    }[provider];
-    if (!sender)
-      throw new ProviderNotImplemented(provider);
-    return sender;
+var _SenderFactory = class {
+  static create(provider, connectionString) {
+    const Sender = _SenderFactory.senders.find((sender) => sender.canHandle === provider);
+    if (Sender === MessageServiceBusSender) {
+      const client = new ServiceBusClient(connectionString);
+      return {
+        sender: new Sender(client)
+      };
+    }
+    if (Sender === FakerMessageSender) {
+      return {
+        sender: new Sender()
+      };
+    }
+    throw new ProviderNotImplemented(provider);
   }
 };
+var SenderFactory = _SenderFactory;
+SenderFactory.senders = [MessageServiceBusSender, FakerMessageSender];
 
 // lib/domain/service/client.ts
 var COMClient = class {
@@ -59,10 +75,8 @@ var COMClient = class {
     this.connectionString = connectionString;
   }
   async dispatch(message) {
-    const client = SenderFactory.createClient(this.provider, this.connectionString);
-    const Sender = SenderFactory.createDispatcher(this.provider);
-    const dispatcher = new Sender(client);
-    await dispatcher.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
+    const { sender } = SenderFactory.create(this.provider, this.connectionString);
+    await sender.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
   }
 };
 

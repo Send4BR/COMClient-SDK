@@ -1,6 +1,7 @@
 import tap from 'tap'
 import { COMClient, Email } from '../../../lib'
 import { ProviderNotImplemented } from '../../../lib/errors/provider-not-implemented'
+import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
 import emailTest from '../../fixtures/email'
 
 tap.test('Should instance a client', (t) => {
@@ -39,8 +40,8 @@ tap.test('should dispatch a error when provider is incorrect', async (t) => {
 
 tap.test('should send a email message using fake provider', async (t) => {
   const client = new COMClient({
-    provider: 'fake',
-    connectionString: 'any',
+    provider: 'faker',
+    connectionString: 'faker_secret',
     clientId: '4632b0b0-9be2-4797-92ad-7c53ff3c5662',
     origin: 'pc da nasa'
   })
@@ -48,5 +49,6 @@ tap.test('should send a email message using fake provider', async (t) => {
   const message = new Email(emailTest)
 
   await client.dispatch(message)
+  t.equal(FakerMessageSender.messages.length, 1)
   t.end()
 })

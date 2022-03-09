@@ -19,18 +19,14 @@ export class COMInternal {
   }
 
   public async error(data: MessageData) {
-    const client = SenderFactory.createClient(this.provider, this.connectionString)
-    const Sender = SenderFactory.createDispatcher(this.provider)
+    const { sender } = SenderFactory.create(this.provider, this.connectionString)
 
-    const dispatcher = new Sender(client)
-    return dispatcher.dispatch(data, this.ERROR_QUEUE)
+    return sender.dispatch(data, this.ERROR_QUEUE)
   }
 
   public async success(data: MessageData) {
-    const client = SenderFactory.createClient(this.provider, this.connectionString)
-    const Sender = SenderFactory.createDispatcher(this.provider)
+    const { sender } = SenderFactory.create(this.provider, this.connectionString)
 
-    const dispatcher = new Sender(client)
-    return dispatcher.dispatch(data, this.SUCCESS_QUEUE)
+    return sender.dispatch(data, this.SUCCESS_QUEUE)
   }
 }

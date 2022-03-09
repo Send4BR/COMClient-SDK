@@ -1,25 +1,27 @@
 import { ServiceBusClient } from '@azure/service-bus'
 import { ProviderNotImplemented } from '../../errors/provider-not-implemented'
+import { FakerMessageSender } from './faker/message'
 import { MessageServiceBusSender } from './service-bus/message'
 
 export class SenderFactory {
-  public static createClient(provider: string, connectionString: string) {
-    const client = {
-      servicebus: new ServiceBusClient(connectionString)
-    }[provider]
+  public static senders = [MessageServiceBusSender, FakerMessageSender]
 
-    if (!client) throw new ProviderNotImplemented(provider)
+  public static create(provider: string, connectionString: string) {
+    const Sender = SenderFactory.senders.find(sender => sender.canHandle === provider)
 
-    return client
-  }
+    if (Sender === MessageServiceBusSender) {
+      const client = new ServiceBusClient(connectionString)
+      return {
+        sender: new Sender(client)
+      }
+    }
 
-  public static createDispatcher(provider: string) {
-    const sender = {
-      servicebus: MessageServiceBusSender
-    }[provider]
+    if (Sender === FakerMessageSender) {
+      return {
+        sender: new Sender()
+      }
+    }
 
-    if (!sender) throw new ProviderNotImplemented(provider)
-
-    return sender
+    throw new ProviderNotImplemented(provider)
   }
 }

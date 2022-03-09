@@ -89,12 +89,24 @@ declare module 'comclient-sdk/lib/index' {
   export * from 'comclient-sdk/lib/domain/entities/message/email';
 
 }
+declare module 'comclient-sdk/lib/infra/senders/faker/message' {
+  import { MessageDispatcher } from 'comclient-sdk/lib/domain/protocols/message-dispatcher';
+  export class FakerMessageSender implements MessageDispatcher {
+      static canHandle: string;
+      static sender: unknown[];
+      dispatch(message: unknown, topic: string): Promise<void>;
+      static get messages(): unknown[];
+  }
+
+}
 declare module 'comclient-sdk/lib/infra/senders/sender' {
-  import { ServiceBusClient } from '@azure/service-bus';
+  import { FakerMessageSender } from 'comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from 'comclient-sdk/lib/infra/senders/service-bus/message';
   export class SenderFactory {
-      static createClient(provider: string, connectionString: string): ServiceBusClient;
-      static createDispatcher(provider: string): typeof MessageServiceBusSender;
+      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
+      static create(provider: string, connectionString: string): {
+          sender: FakerMessageSender;
+      };
   }
 
 }
@@ -103,6 +115,7 @@ declare module 'comclient-sdk/lib/infra/senders/service-bus/message' {
   import { MessageDispatcher } from 'comclient-sdk/lib/domain/protocols/message-dispatcher';
   export class MessageServiceBusSender implements MessageDispatcher {
       private client;
+      static canHandle: string;
       constructor(client: ServiceBusClient);
       dispatch(message: unknown, topic: string): Promise<void>;
   }

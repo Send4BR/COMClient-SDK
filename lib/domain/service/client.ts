@@ -23,11 +23,8 @@ export class COMClient {
   }
 
   public async dispatch(message: Email) {
-    const client = SenderFactory.createClient(this.provider, this.connectionString)
-    const Sender = SenderFactory.createDispatcher(this.provider)
+    const { sender } = SenderFactory.create(this.provider, this.connectionString)
 
-    const dispatcher = new Sender(client)
-
-    await dispatcher.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE)
+    await sender.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE)
   }
 }
