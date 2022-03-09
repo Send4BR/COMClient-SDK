@@ -1,5 +1,5 @@
-declare module 'comclient-sdk/lib/domain/entities/message/email' {
-  import { Message, MessageData } from 'comclient-sdk/lib/domain/entities/message/message';
+declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
+  import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
   type MessageType = {
       from: string;
       subject: string;
@@ -21,7 +21,7 @@ declare module 'comclient-sdk/lib/domain/entities/message/email' {
   export {};
 
 }
-declare module 'comclient-sdk/lib/domain/entities/message/message' {
+declare module '@aftersale/comclient-sdk/lib/domain/entities/message/message' {
   export type MessageData = {
       externalId?: string;
   };
@@ -31,14 +31,14 @@ declare module 'comclient-sdk/lib/domain/entities/message/message' {
   }
 
 }
-declare module 'comclient-sdk/lib/domain/protocols/message-dispatcher' {
+declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher' {
   export interface MessageDispatcher {
       dispatch(message: unknown, topic: string): Promise<void>;
   }
 
 }
-declare module 'comclient-sdk/lib/domain/service/client' {
-  import { Email } from 'comclient-sdk/lib/domain/entities/message/email';
+declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
+  import { Email } from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
   type ClientParams = {
       provider?: string;
       connectionString: string;
@@ -57,7 +57,7 @@ declare module 'comclient-sdk/lib/domain/service/client' {
   export {};
 
 }
-declare module 'comclient-sdk/lib/domain/service/internal-client' {
+declare module '@aftersale/comclient-sdk/lib/domain/service/internal-client' {
   type Params = {
       provider?: string;
       connectionString: string;
@@ -78,21 +78,21 @@ declare module 'comclient-sdk/lib/domain/service/internal-client' {
   export {};
 
 }
-declare module 'comclient-sdk/lib/errors/provider-not-implemented' {
+declare module '@aftersale/comclient-sdk/lib/errors/provider-not-implemented' {
   export class ProviderNotImplemented extends Error {
       constructor(provider: string);
   }
 
 }
-declare module 'comclient-sdk/lib/index' {
-  export * from 'comclient-sdk/lib/domain/service/client';
-  export * from 'comclient-sdk/lib/domain/entities/message/email';
-  export * from 'comclient-sdk/lib/domain/service/internal-client';
-  export * from 'comclient-sdk/lib/infra/senders/faker/message';
+declare module '@aftersale/comclient-sdk/lib/index' {
+  export * from '@aftersale/comclient-sdk/lib/domain/service/client';
+  export * from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
+  export * from '@aftersale/comclient-sdk/lib/domain/service/internal-client';
+  export * from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
 
 }
-declare module 'comclient-sdk/lib/infra/senders/faker/message' {
-  import { MessageDispatcher } from 'comclient-sdk/lib/domain/protocols/message-dispatcher';
+declare module '@aftersale/comclient-sdk/lib/infra/senders/faker/message' {
+  import { MessageDispatcher } from '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher';
   export class FakerMessageSender implements MessageDispatcher {
       static canHandle: string;
       static sender: unknown[];
@@ -102,9 +102,9 @@ declare module 'comclient-sdk/lib/infra/senders/faker/message' {
   }
 
 }
-declare module 'comclient-sdk/lib/infra/senders/sender' {
-  import { FakerMessageSender } from 'comclient-sdk/lib/infra/senders/faker/message';
-  import { MessageServiceBusSender } from 'comclient-sdk/lib/infra/senders/service-bus/message';
+declare module '@aftersale/comclient-sdk/lib/infra/senders/sender' {
+  import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
+  import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export class SenderFactory {
       static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
       static create(provider: string, connectionString: string): {
@@ -113,9 +113,9 @@ declare module 'comclient-sdk/lib/infra/senders/sender' {
   }
 
 }
-declare module 'comclient-sdk/lib/infra/senders/service-bus/message' {
+declare module '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message' {
   import { ServiceBusClient } from '@azure/service-bus';
-  import { MessageDispatcher } from 'comclient-sdk/lib/domain/protocols/message-dispatcher';
+  import { MessageDispatcher } from '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher';
   export class MessageServiceBusSender implements MessageDispatcher {
       private client;
       static canHandle: string;
@@ -124,19 +124,19 @@ declare module 'comclient-sdk/lib/infra/senders/service-bus/message' {
   }
 
 }
-declare module 'comclient-sdk/test/domain/service/client.spec' {
+declare module '@aftersale/comclient-sdk/test/domain/service/client.spec' {
   export {};
 
 }
-declare module 'comclient-sdk/test/domain/service/internal-client.spec' {
+declare module '@aftersale/comclient-sdk/test/domain/service/internal-client.spec' {
   export {};
 
 }
-declare module 'comclient-sdk/test/entities/message/email.spec' {
+declare module '@aftersale/comclient-sdk/test/entities/message/email.spec' {
   export {};
 
 }
-declare module 'comclient-sdk/test/fixtures/email' {
+declare module '@aftersale/comclient-sdk/test/fixtures/email' {
   const _default: {
       message: {
           body: string;
@@ -151,7 +151,7 @@ declare module 'comclient-sdk/test/fixtures/email' {
   export default _default;
 
 }
-declare module 'comclient-sdk' {
-  import main = require('comclient-sdk/lib/index');
+declare module '@aftersale/comclient-sdk' {
+  import main = require('@aftersale/comclient-sdk/lib/index');
   export = main;
 }
