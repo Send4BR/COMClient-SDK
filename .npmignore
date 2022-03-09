@@ -1,3 +1,10 @@
 lib
 test
 .github
+.husky
+build.js
+.eslintrc.json
+.eslintignore
+.lintstagedrc.json
+tsconfig.json
+package-lock.json
