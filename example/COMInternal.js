@@ -1,4 +1,4 @@
-import { COMInternal } from 'comclient-sdk'
+import { COMInternal } from '@aftersale/comclient-sdk'
 
 const client = new COMInternal({
   provider: 'faker',
