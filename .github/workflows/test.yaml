@@ -24,5 +24,7 @@ jobs:
 
       - name: Publish results
         uses: harupy/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           filename: COVERAGE_REPORT

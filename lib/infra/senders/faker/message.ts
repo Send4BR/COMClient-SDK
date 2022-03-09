@@ -6,6 +6,7 @@ export class FakerMessageSender implements MessageDispatcher {
   public static sender: unknown[] = []
 
   async dispatch(message: unknown, topic: string): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log('sending message to topic ' + topic)
     FakerMessageSender.sender.push(message)
   }
