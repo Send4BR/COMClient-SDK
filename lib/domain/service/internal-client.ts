@@ -6,7 +6,7 @@ type Params = {
   connectionString: string;
 };
 
-type MessageData = {id: string, message: string}
+type MessageData = {id: string, error?: string}
 
 export class COMInternal {
   private readonly provider: string

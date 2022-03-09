@@ -66,7 +66,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/internal-client' {
   };
   type MessageData = {
       id: string;
-      message: string;
+      error?: string;
   };
   export class COMInternal {
       private readonly provider;
