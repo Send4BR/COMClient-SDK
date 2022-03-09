@@ -6,25 +6,12 @@ import emailTest from '../../fixtures/email'
 
 tap.test('Should instance a client', (t) => {
   const client = new COMClient({
-    provider: 'faker',
     connectionString: 'Endpoint=sb://test.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test',
     origin: 'test',
     clientId: 'test'
   })
 
   t.equal(client instanceof COMClient, true)
-  t.end()
-})
-
-tap.test('should send a message', async (t) => {
-  const client = new COMClient({
-    provider: 'faker',
-    connectionString: 'Endpoint=sb://test.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test',
-    origin: 'test',
-    clientId: 'test'
-  })
-
-  t.resolves(client.dispatch('hello from here' as unknown as Email))
   t.end()
 })
 
