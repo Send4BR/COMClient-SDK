@@ -40,6 +40,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher
 declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
   import { Email } from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
   type ClientParams = {
+      environment?: string;
       provider?: string;
       connectionString: string;
       origin: string;
@@ -51,7 +52,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
       private readonly clientId;
       private readonly MESSAGE_QUEUE;
       private readonly connectionString;
-      constructor({ provider, connectionString, origin, clientId }: ClientParams);
+      constructor({ environment, provider, connectionString, origin, clientId }: ClientParams);
       dispatch(message: Email): Promise<void>;
   }
   export {};
@@ -59,6 +60,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
 }
 declare module '@aftersale/comclient-sdk/lib/domain/service/internal-client' {
   type Params = {
+      environment?: string;
       provider?: string;
       connectionString: string;
   };
@@ -71,7 +73,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/internal-client' {
       private readonly ERROR_QUEUE;
       private readonly SUCCESS_QUEUE;
       private readonly connectionString;
-      constructor({ provider, connectionString }: Params);
+      constructor({ environment, provider, connectionString }: Params);
       error(data: MessageData): Promise<void>;
       success(data: MessageData): Promise<void>;
   }
@@ -106,8 +108,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
   }
 
 }

@@ -97,12 +97,12 @@ SenderFactory.senders = [MessageServiceBusSender, FakerMessageSender];
 
 // lib/domain/service/client.ts
 var COMClient = class {
-  constructor({ provider = "servicebus", connectionString, origin, clientId }) {
-    this.MESSAGE_QUEUE = "send-message";
+  constructor({ environment = "production", provider = "servicebus", connectionString, origin, clientId }) {
     this.provider = provider;
     this.origin = origin;
     this.clientId = clientId;
     this.connectionString = connectionString;
+    this.MESSAGE_QUEUE = `${environment}-send-message`;
   }
   async dispatch(message) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
@@ -129,11 +129,11 @@ var Email = class extends Message {
 
 // lib/domain/service/internal-client.ts
 var COMInternal = class {
-  constructor({ provider = "servicebus", connectionString }) {
-    this.ERROR_QUEUE = "message-fail";
-    this.SUCCESS_QUEUE = "message-success";
+  constructor({ environment = "production", provider = "servicebus", connectionString }) {
     this.provider = provider;
     this.connectionString = connectionString;
+    this.ERROR_QUEUE = `${environment}-message-fail`;
+    this.SUCCESS_QUEUE = `${environment}-message-success`;
   }
   async error(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString);

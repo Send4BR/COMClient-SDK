@@ -1,7 +1,8 @@
 import SenderFactory from '../../infra/senders/sender-factory'
 
 type Params = {
-  provider?: string
+  environment?: string;
+  provider?: string;
   connectionString: string;
 };
 
@@ -9,13 +10,15 @@ type MessageData = {id: string, message: string}
 
 export class COMInternal {
   private readonly provider: string
-  private readonly ERROR_QUEUE: string = 'message-fail'
-  private readonly SUCCESS_QUEUE: string = 'message-success'
+  private readonly ERROR_QUEUE: string
+  private readonly SUCCESS_QUEUE: string
   private readonly connectionString: string
 
-  constructor({ provider = 'servicebus', connectionString }: Params) {
+  constructor({ environment = 'production', provider = 'servicebus', connectionString }: Params) {
     this.provider = provider
     this.connectionString = connectionString
+    this.ERROR_QUEUE = `${environment}-message-fail`
+    this.SUCCESS_QUEUE = `${environment}-message-success`
   }
 
   public async error(data: MessageData) {
