@@ -30,7 +30,7 @@ __export(lib_exports, {
   FakerMessageSender: () => FakerMessageSender
 });
 
-// lib/infra/senders/sender.ts
+// lib/infra/senders/sender-factory.ts
 var import_service_bus = require("@azure/service-bus");
 
 // lib/errors/provider-not-implemented.ts
@@ -79,20 +79,15 @@ var MessageServiceBusSender = class {
 };
 MessageServiceBusSender.canHandle = "servicebus";
 
-// lib/infra/senders/sender.ts
+// lib/infra/senders/sender-factory.ts
 var _SenderFactory = class {
   static create(provider, connectionString) {
     const Sender = _SenderFactory.senders.find((sender) => sender.canHandle === provider);
-    if (Sender === MessageServiceBusSender) {
-      const client = new import_service_bus.ServiceBusClient(connectionString);
-      return {
-        sender: new Sender(client)
-      };
-    }
-    if (Sender === FakerMessageSender) {
-      return {
-        sender: new Sender()
-      };
+    switch (Sender) {
+      case MessageServiceBusSender:
+        return new Sender(new import_service_bus.ServiceBusClient(connectionString));
+      case FakerMessageSender:
+        return new Sender();
     }
     throw new ProviderNotImplemented(provider);
   }
@@ -102,15 +97,15 @@ SenderFactory.senders = [MessageServiceBusSender, FakerMessageSender];
 
 // lib/domain/service/client.ts
 var COMClient = class {
-  constructor({ provider = "servicebus", connectionString, origin, clientId }) {
-    this.MESSAGE_QUEUE = "send-message";
+  constructor({ environment = "production", provider = "servicebus", connectionString, origin, clientId }) {
     this.provider = provider;
     this.origin = origin;
     this.clientId = clientId;
     this.connectionString = connectionString;
+    this.MESSAGE_QUEUE = `${environment}-send-message`;
   }
   async dispatch(message) {
-    const { sender } = SenderFactory.create(this.provider, this.connectionString);
+    const sender = SenderFactory.create(this.provider, this.connectionString);
     await sender.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
   }
 };
@@ -134,18 +129,18 @@ var Email = class extends Message {
 
 // lib/domain/service/internal-client.ts
 var COMInternal = class {
-  constructor({ provider = "servicebus", connectionString }) {
-    this.ERROR_QUEUE = "message-fail";
-    this.SUCCESS_QUEUE = "message-success";
+  constructor({ environment = "production", provider = "servicebus", connectionString }) {
     this.provider = provider;
     this.connectionString = connectionString;
+    this.ERROR_QUEUE = `${environment}-message-fail`;
+    this.SUCCESS_QUEUE = `${environment}-message-success`;
   }
   async error(data) {
-    const { sender } = SenderFactory.create(this.provider, this.connectionString);
+    const sender = SenderFactory.create(this.provider, this.connectionString);
     return await sender.dispatch(data, this.ERROR_QUEUE);
   }
   async success(data) {
-    const { sender } = SenderFactory.create(this.provider, this.connectionString);
+    const sender = SenderFactory.create(this.provider, this.connectionString);
     return await sender.dispatch(data, this.SUCCESS_QUEUE);
   }
 };
