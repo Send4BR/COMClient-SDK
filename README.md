@@ -39,6 +39,7 @@ client.dispatch(message)
 ## Client
 
 O Client é o objeto que vai realizar a conexão com o COM-service.
+
 Ele recebe algumas configurações:
 
 |field|type|description|required|defaultOption|available options |
@@ -56,9 +57,9 @@ O `Client` possui um único método chamado `dispatch`
 
 ## Message
 
-a mensagem que vai ser enviada.
+A mensagem que vai ser enviada.
 
-uma mensagem pode ser do tipo `Email`, `SMS` ou `Whatsapp`.
+Uma mensagem pode ser do tipo `Email`, `SMS` ou `Whatsapp`.
 
 ### Email
 
