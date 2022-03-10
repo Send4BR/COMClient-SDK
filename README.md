@@ -50,7 +50,7 @@ Ele recebe algumas configurações:
 | provider | `string` | Provider to send message | `false` | `servicebus` | `servicebus` \| `faker` |
 | environment | `string` | COM-service environment | `false` | `prod` | `prod` \| `stg` \| `spr` |
 
-O `Client` possui um único método chamado `dispatch`
+O `Client` possui um único método chamado `dispatch`:
 
 - `dispatch: (message: Message) => Promise<void>`: Realiza o envio da mensagem.
 
