@@ -63,7 +63,7 @@ Uma mensagem pode ser do tipo `Email`, `SMS` ou `Whatsapp`.
 
 ### Email
 
-O email recebe um objeto de configurações com as seguintes propriedades
+O email recebe um objeto de configurações com as seguintes propriedades:
 
 | field | type | description | required |
 |-------|------|-------------|----------|
