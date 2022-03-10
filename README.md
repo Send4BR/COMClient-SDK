@@ -7,7 +7,7 @@ SDK de comunicação com o COM-Service
 Para utilizar a SDK, você deve instalar como dependência ao projeto.
 
 ``` shell
-$ npm i https://github.com/Send4BR/COMClient-SDK
+npm i https://github.com/Send4BR/COMClient-SDK
 ```
 
 ## Como utilizar
