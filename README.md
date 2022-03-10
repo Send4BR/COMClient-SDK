@@ -52,7 +52,7 @@ Ele recebe algumas configurações:
 
 O `Client` possui um único método chamado `dispatch`
 
-- `dispatch: (message: Message) => Promise<void>`: Realiza o envio da mensagem
+- `dispatch: (message: Message) => Promise<void>`: Realiza o envio da mensagem.
 
 
 ## Message
