@@ -66,6 +66,6 @@ O email recebe um objeto de configurações com as seguintes propriedades
 
 | field | type | description | required |
 |-------|------|-------------|----------|
-|recipient| `{email: string}` | Para quem o email será envaido | `true` |
+|recipient| `{email: string}` | Para quem o email será enviado | `true` |
 |message| `{body: string, from: string, subject: string}` | Corpo do email que será enviado | `true` |
-| externalId | `string` | Id de referencia para identificar uma mensagem no COM-service | `false` | 
+| externalId | `string` | Id de referência para identificar uma mensagem no COM-service | `false` | 
