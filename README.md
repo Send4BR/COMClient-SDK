@@ -47,7 +47,7 @@ Ele recebe algumas configurações:
 | origin | `string` | Your server name | `true` | - | - |
 | connectionString | `string` | COM-service provider connection string | `true` | - | - |
 | provider | `string` | Provider to send message | `false` | `servicebus` | `servicebus` \| `faker` |
-| environment | `string` | COM-service environment | `false` | `production` | `prod` \| `stg` \| `spr` |
+| environment | `string` | COM-service environment | `false` | `prod` | `prod` \| `stg` \| `spr` |
 
 O `Client` possui um único método chamado `dispatch`
 
