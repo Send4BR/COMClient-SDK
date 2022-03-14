@@ -31,6 +31,52 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/message' {
   }
 
 }
+declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
+  import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
+  type MessageType = {
+      prefix?: string;
+      text: string;
+      suffix?: string;
+      variables?: Record<string, string>;
+  };
+  type RecipientType = {
+      phone: string;
+  };
+  type SMSData = {
+      message: MessageType;
+      recipient: RecipientType;
+  } & MessageData;
+  export class SMS extends Message {
+      readonly channel: string;
+      readonly message: MessageType;
+      readonly recipient: RecipientType;
+      constructor({ message, recipient, externalId }: SMSData);
+      shortify(char?: number): void;
+  }
+  export {};
+
+}
+declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
+  import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
+  type MessageType = {
+      from: string;
+  };
+  type RecipientType = {
+      phone: string;
+  };
+  type WhatsappData = {
+      message: MessageType;
+      recipient: RecipientType;
+  } & MessageData;
+  export class Whatsapp extends Message {
+      readonly channel: string;
+      readonly message: MessageType;
+      readonly recipient: RecipientType;
+      constructor({ message, recipient, externalId }: WhatsappData);
+  }
+  export {};
+
+}
 declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher' {
   export interface MessageDispatcher {
       dispatch(message: unknown, topic: string): Promise<void>;
@@ -109,8 +155,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
-      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
+      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
+      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
   }
 
 }
