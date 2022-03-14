@@ -21,7 +21,7 @@ export class COMClient {
     this.origin = origin
     this.clientId = clientId
     this.connectionString = connectionString
-    this.MESSAGE_QUEUE = `${environment}-send-message`
+    this.MESSAGE_QUEUE = `${environment}--send-message`
   }
 
   public async dispatch(message: Email) {

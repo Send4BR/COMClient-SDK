@@ -12,7 +12,7 @@ tap.test('should send a success message', async (t) => {
 
   const message = {
     id: '2323232',
-    message: 'Tudo certo por aqui!'
+    sentAt: 1647261032
   }
 
   await client.success(message)

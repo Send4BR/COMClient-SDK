@@ -102,7 +102,7 @@ var COMClient = class {
     this.origin = origin;
     this.clientId = clientId;
     this.connectionString = connectionString;
-    this.MESSAGE_QUEUE = `${environment}-send-message`;
+    this.MESSAGE_QUEUE = `${environment}--send-message`;
   }
   async dispatch(message) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
@@ -132,8 +132,8 @@ var COMInternal = class {
   constructor({ environment = "production", provider = "servicebus", connectionString }) {
     this.provider = provider;
     this.connectionString = connectionString;
-    this.ERROR_QUEUE = `${environment}-message-fail`;
-    this.SUCCESS_QUEUE = `${environment}-message-success`;
+    this.ERROR_QUEUE = `${environment}--message-fail`;
+    this.SUCCESS_QUEUE = `${environment}--message-success`;
   }
   async error(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
