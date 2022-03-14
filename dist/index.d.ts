@@ -58,19 +58,16 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
 }
 declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
   import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
-  type MessageType = {
-      from: string;
-  };
   type RecipientType = {
       phone: string;
   };
   type WhatsappData = {
-      message: MessageType;
+      message: any;
       recipient: RecipientType;
   } & MessageData;
   export class Whatsapp extends Message {
       readonly channel: string;
-      readonly message: MessageType;
+      readonly message: any;
       readonly recipient: RecipientType;
       constructor({ message, recipient, externalId }: WhatsappData);
   }
