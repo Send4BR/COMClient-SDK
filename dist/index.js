@@ -106,24 +106,25 @@ var COMClient = class {
   }
   async dispatch(message) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    await sender.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
-  }
-};
-
-// lib/domain/entities/message/message.ts
-var Message = class {
-  constructor({ externalId }) {
-    this.externalId = externalId;
+    await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
   }
 };
 
 // lib/domain/entities/message/email.ts
-var Email = class extends Message {
+var Email = class {
   constructor({ message, recipient, externalId }) {
-    super({ externalId });
     this.channel = "email";
+    this.externalId = externalId;
     this.message = message;
     this.recipient = recipient;
+  }
+  getMessage() {
+    return {
+      channel: this.channel,
+      externalId: this.externalId,
+      recipient: this.recipient,
+      message: this.message
+    };
   }
 };
 

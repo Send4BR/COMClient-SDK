@@ -12,11 +12,13 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
-  export class Email extends Message {
+  export class Email implements Message {
       readonly channel: string;
+      readonly externalId?: string;
       readonly message: MessageType;
       readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId }: EmailData);
+      constructor({ message, recipient, externalId }: Pick<EmailData, 'message' | 'recipient' | 'externalId'>);
+      getMessage(): EmailData;
   }
   export {};
 
@@ -24,10 +26,12 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
 declare module '@aftersale/comclient-sdk/lib/domain/entities/message/message' {
   export type MessageData = {
       externalId?: string;
+      channel: string;
   };
-  export class Message {
-      readonly externalId?: string;
-      constructor({ externalId }: MessageData);
+  export interface Message {
+      externalId?: string;
+      channel?: string;
+      getMessage(): Partial<MessageData>;
   }
 
 }
@@ -42,7 +46,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
   type RecipientType = {
       phone: string;
   };
-  type SMSData = {
+  export type SMSData = {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
@@ -50,13 +54,15 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       shortify?: boolean;
       char?: number;
   };
-  export class SMS extends Message {
+  export class SMS implements Message {
+      readonly channel: string;
+      readonly externalId?: string;
+      readonly recipient: RecipientType;
+      private readonly message;
       private readonly RESERVED_SPACE_FORMAT;
       private readonly SEE_MORE;
-      private readonly message;
-      readonly channel: string;
-      readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId }: SMSData, options?: SMSOptions);
+      constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>, options?: SMSOptions);
+      getMessage(): SMSData;
       get text(): string;
       private set text(value);
       get suffix(): string | undefined;
@@ -83,11 +89,13 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       message: any;
       recipient: RecipientType;
   } & MessageData;
-  export class Whatsapp extends Message {
+  export class Whatsapp implements Message {
       readonly channel: string;
+      readonly externalId?: string;
       readonly message: any;
       readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId }: WhatsappData);
+      constructor({ message, recipient, externalId }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId'>);
+      getMessage(): WhatsappData;
   }
   export {};
 
@@ -100,6 +108,8 @@ declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher
 }
 declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
   import { Email } from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
+  import { SMS } from '@aftersale/comclient-sdk/lib/domain/entities/message/sms';
+  import { Whatsapp } from '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp';
   type ClientParams = {
       environment?: string;
       provider?: string;
@@ -114,7 +124,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
       private readonly MESSAGE_QUEUE;
       private readonly connectionString;
       constructor({ environment, provider, connectionString, origin, clientId }: ClientParams);
-      dispatch(message: Email): Promise<void>;
+      dispatch(message: Email | SMS | Whatsapp): Promise<void>;
   }
   export {};
 
@@ -170,8 +180,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
   }
 
 }

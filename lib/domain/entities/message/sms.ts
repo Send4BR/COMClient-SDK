@@ -12,7 +12,7 @@ type RecipientType = {
   phone: string;
 };
 
-type SMSData = {
+export type SMSData = {
   message: MessageType;
   recipient: RecipientType;
 } & MessageData;
@@ -22,15 +22,16 @@ type SMSOptions = {
   char?: number;
 };
 
-export class SMS extends Message {
+export class SMS implements Message {
+  readonly channel: string = 'sms';
+  readonly externalId?: string
+  readonly recipient: RecipientType;
+  private readonly message: MessageType;
   private readonly RESERVED_SPACE_FORMAT = 3;
   private readonly SEE_MORE = '... Veja mais em:';
-  private readonly message: MessageType;
-  readonly channel: string = 'sms';
-  readonly recipient: RecipientType;
 
-  constructor({ message, recipient, externalId }: SMSData, options?: SMSOptions) {
-    super({ externalId });
+  constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>, options?: SMSOptions) {
+    this.externalId =  externalId
     this.message = this.normalize(message);
     this.recipient = recipient;
     this.replaceVariables();
@@ -40,6 +41,15 @@ export class SMS extends Message {
     }
 
     this.build();
+  }
+
+  getMessage(): SMSData {
+    return {
+      externalId: this.externalId,
+      message: { text: this.text },
+      channel: this.channel,
+      recipient: this.recipient,
+    }
   }
 
   get text() {
@@ -127,4 +137,5 @@ export class SMS extends Message {
       variables: message.variables
     };
   }
+
 }
