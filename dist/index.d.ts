@@ -46,11 +46,17 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
+  type SMSOptions = {
+      shortify?: boolean;
+      char?: number;
+  };
   export class SMS extends Message {
+      private readonly RESERVED_SPACE_FORMAT;
+      private readonly SEE_MORE;
       private readonly message;
       readonly channel: string;
       readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId }: SMSData);
+      constructor({ message, recipient, externalId }: SMSData, options?: SMSOptions);
       get text(): string;
       private set text(value);
       get suffix(): string | undefined;
@@ -58,7 +64,8 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       get prefix(): string | undefined;
       private set prefix(value);
       private get variables();
-      shortify(char?: number): void;
+      private shortify;
+      private createSuffix;
       private build;
       private get messageSize();
       private replaceVariables;

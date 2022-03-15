@@ -17,16 +17,29 @@ type SMSData = {
   recipient: RecipientType;
 } & MessageData;
 
+type SMSOptions = {
+  shortify?: boolean;
+  char?: number;
+};
+
 export class SMS extends Message {
+  private readonly RESERVED_SPACE_FORMAT = 3;
+  private readonly SEE_MORE = '... Veja mais em:';
   private readonly message: MessageType;
   readonly channel: string = 'sms';
   readonly recipient: RecipientType;
 
-  constructor({ message, recipient, externalId }: SMSData) {
+  constructor({ message, recipient, externalId }: SMSData, options?: SMSOptions) {
     super({ externalId });
     this.message = this.normalize(message);
     this.recipient = recipient;
     this.replaceVariables();
+
+    if (options?.shortify) {
+      this.shortify(options.char);
+    }
+
+    this.build();
   }
 
   get text() {
@@ -57,36 +70,35 @@ export class SMS extends Message {
     return this.message.variables;
   }
 
-  shortify(char = 160) {
-    const SEE_MORE = '... Veja mais em:';
+  private shortify(char = 160) {
     const LINK = '$link';
     if (this.messageSize > char) {
+      this.createSuffix();
       this.text = this.text.replace(LINK, '');
       this.text = this.text = this.text.slice(
         0,
-        char -
-          ((this.variables?.link.length ?? 0) +
-            (this.prefix?.length ?? 0) +
-            (this.suffix?.length ?? 0) +
-            SEE_MORE.length +
-            LINK.length)
+        char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT)
       );
-      this.suffix = this.variables?.link ? `${SEE_MORE} ${this.variables?.link}${ this.suffix ? ` ${this.suffix}` : ''}` : undefined;
-    } else {
-      this.text = this.text.replace(LINK, this.variables?.link ?? '');
+    } else if (this.variables?.link) {
+      this.text = this.text.replace(LINK, this.variables.link);
     }
-
-    this.build();
   }
 
-  
-  
+  private createSuffix() {
+    this.suffix = this.variables?.link
+      ? `${this.SEE_MORE} ${this.variables?.link}${this.suffix ? ` ${this.suffix}` : ''}`
+      : undefined;
+  }
+
   private build() {
-    if (!this.prefix && !this.suffix) return
+    if (!this.prefix && !this.suffix) return;
     if (this.prefix && this.suffix) this.text = `${this.prefix}: ${this.text} ${this.suffix}`;
     if (!this.prefix) this.text = `${this.text} ${this.suffix}`;
-    if (!this.suffix) this.text = `${this.prefix} ${this.text}`
-  } 
+    if (!this.suffix) this.text = `${this.prefix}: ${this.text}`;
+
+    this.prefix = undefined;
+    this.suffix = undefined;
+  }
 
   private get messageSize() {
     const SMS_LINK_MAX_SIZE = 30;
@@ -99,10 +111,10 @@ export class SMS extends Message {
   }
 
   private replaceVariables() {
+    const variables = this.variables ?? {};
     Object.keys(this.variables ?? {}).map((key) => {
       if (key !== 'link') {
-        const value = this.variables ? this.variables[key] : '';
-        this.text = this.text.replace('$' + key, value);
+        this.text = this.text.replace('$' + key, variables[key]);
       }
     });
   }
