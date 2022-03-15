@@ -41,7 +41,7 @@ tap.test('should send a email message using fake provider', async (t) => {
 
   await client.dispatch(message)
   t.equal(FakerMessageSender.messages.length, 1)
-  t.match((FakerMessageSender.messages[0] as any), message.getMessage())
+  t.match(FakerMessageSender.messages[0], message.getMessage())
   t.end()
 
   tap.test('should send a SMS message using fake provider', async (t) => {
@@ -68,7 +68,7 @@ tap.test('should send a email message using fake provider', async (t) => {
 
     await client.dispatch(message)
     t.equal(FakerMessageSender.messages.length, 1)
-    t.match((FakerMessageSender.messages[0] as any), message.getMessage())
+    t.match(FakerMessageSender.messages[0], message.getMessage())
     t.end()
   })
 })
