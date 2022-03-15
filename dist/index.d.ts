@@ -47,11 +47,22 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       recipient: RecipientType;
   } & MessageData;
   export class SMS extends Message {
+      private readonly message;
       readonly channel: string;
-      readonly message: MessageType;
       readonly recipient: RecipientType;
       constructor({ message, recipient, externalId }: SMSData);
+      get text(): string;
+      private set text(value);
+      get suffix(): string | undefined;
+      private set suffix(value);
+      get prefix(): string | undefined;
+      private set prefix(value);
+      private get variables();
       shortify(char?: number): void;
+      private build;
+      private get messageSize();
+      private replaceVariables;
+      private normalize;
   }
   export {};
 
@@ -177,6 +188,10 @@ declare module '@aftersale/comclient-sdk/test/domain/service/internal-client.spe
 
 }
 declare module '@aftersale/comclient-sdk/test/entities/message/email.spec' {
+  export {};
+
+}
+declare module '@aftersale/comclient-sdk/test/entities/message/sms.spec' {
   export {};
 
 }
