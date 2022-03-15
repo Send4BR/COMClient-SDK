@@ -75,10 +75,6 @@ export class SMS implements Message {
     return this.message.prefix
   }
 
-  private set prefix(prefix: string | undefined) {
-    this.message.prefix = prefix
-  }
-
   private get variables() {
     return this.message.variables
   }
@@ -108,9 +104,6 @@ export class SMS implements Message {
     if (this.prefix && this.suffix) this.text = `${this.prefix}: ${this.text} ${this.suffix}`
     if (!this.prefix) this.text = `${this.text} ${this.suffix}`
     if (!this.suffix) this.text = `${this.prefix}: ${this.text}`
-
-    this.prefix = undefined
-    this.suffix = undefined
   }
 
   private get messageSize() {

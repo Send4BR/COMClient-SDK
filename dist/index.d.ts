@@ -68,7 +68,6 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       get suffix(): string | undefined;
       private set suffix(value);
       get prefix(): string | undefined;
-      private set prefix(value);
       private get variables();
       private shortify;
       private createSuffix;

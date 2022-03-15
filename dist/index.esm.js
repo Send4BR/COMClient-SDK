@@ -135,9 +135,6 @@ var SMS = class {
   get prefix() {
     return this.message.prefix;
   }
-  set prefix(prefix) {
-    this.message.prefix = prefix;
-  }
   get variables() {
     return this.message.variables;
   }
@@ -163,8 +160,6 @@ var SMS = class {
       this.text = `${this.text} ${this.suffix}`;
     if (!this.suffix)
       this.text = `${this.prefix}: ${this.text}`;
-    this.prefix = void 0;
-    this.suffix = void 0;
   }
   get messageSize() {
     const SMS_LINK_MAX_SIZE = 30;

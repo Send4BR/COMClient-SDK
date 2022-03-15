@@ -33,8 +33,6 @@ tap.test('should normalize diacritics in message', (t) => {
   })
 
   t.equal(message.text, 'Loja da Ana: E isso ai, Como a gente achou que ia ser PEDIDO #123')
-  t.equal(message.prefix, undefined)
-  t.equal(message.suffix, undefined)
 
   t.end()
 
