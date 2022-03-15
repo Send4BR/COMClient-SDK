@@ -15,7 +15,7 @@ type WhatsappData = {
 
 export class Whatsapp implements Message {
   readonly channel: string = 'whatsapp'
-  readonly externalId?: string 
+  readonly externalId?: string
   readonly message: any
   readonly recipient: RecipientType
 
@@ -30,7 +30,7 @@ export class Whatsapp implements Message {
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
-      message: this.message,
+      message: this.message
     }
   }
 }

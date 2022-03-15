@@ -17,7 +17,7 @@ type EmailData = {
 
 export class Email implements Message {
   readonly channel: string = 'email'
-  readonly externalId?: string;
+  readonly externalId?: string
   readonly message: MessageType
   readonly recipient: RecipientType
 
@@ -32,7 +32,7 @@ export class Email implements Message {
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
-      message: this.message,
+      message: this.message
     }
   }
 }

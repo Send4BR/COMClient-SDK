@@ -44,9 +44,9 @@ var ProviderNotImplemented = class extends Error {
 
 // lib/infra/senders/faker/message.ts
 var _FakerMessageSender = class {
-  async dispatch(message2, topic) {
+  async dispatch(message, topic) {
     console.log("sending message to topic " + topic);
-    _FakerMessageSender.sender.push(message2);
+    _FakerMessageSender.sender.push(message);
   }
   static get messages() {
     return this.sender;
@@ -64,11 +64,11 @@ var MessageServiceBusSender = class {
   constructor(client) {
     this.client = client;
   }
-  async dispatch(message2, topic) {
+  async dispatch(message, topic) {
     const sender = this.client.createSender(topic);
     try {
       await sender.sendMessages({
-        body: message2,
+        body: message,
         contentType: "application/json"
       });
     } catch (err) {
@@ -106,18 +106,18 @@ var COMClient = class {
     this.connectionString = connectionString;
     this.MESSAGE_QUEUE = `${environment}--send-message`;
   }
-  async dispatch(message2) {
+  async dispatch(message) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    await sender.dispatch({ ...message2.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
+    await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
   }
 };
 
 // lib/domain/entities/message/email.ts
 var Email = class {
-  constructor({ message: message2, recipient, externalId }) {
+  constructor({ message, recipient, externalId }) {
     this.channel = "email";
     this.externalId = externalId;
-    this.message = message2;
+    this.message = message;
     this.recipient = recipient;
   }
   getMessage() {
@@ -133,12 +133,12 @@ var Email = class {
 // lib/domain/entities/message/sms.ts
 var import_normalize_text = require("normalize-text");
 var SMS = class {
-  constructor({ message: message2, recipient, externalId }, options) {
+  constructor({ message, recipient, externalId }, options) {
     this.channel = "sms";
     this.RESERVED_SPACE_FORMAT = 3;
     this.SEE_MORE = "... Veja mais em:";
     this.externalId = externalId;
-    this.message = this.normalize(message2);
+    this.message = this.normalize(message);
     this.recipient = recipient;
     this.replaceVariables();
     if (options?.shortify) {
@@ -206,45 +206,28 @@ var SMS = class {
   }
   replaceVariables() {
     const variables = this.variables ?? {};
-    Object.keys(this.variables ?? {}).map((key) => {
+    Object.keys(variables).forEach((key) => {
       if (key !== "link") {
         this.text = this.text.replace("$" + key, variables[key]);
       }
     });
   }
-  normalize(message2) {
+  normalize(message) {
     return {
-      text: (0, import_normalize_text.normalizeDiacritics)(message2.text),
-      suffix: message2.suffix ? (0, import_normalize_text.normalizeDiacritics)(message2.suffix) : void 0,
-      prefix: message2.prefix ? (0, import_normalize_text.normalizeDiacritics)(message2.prefix) : void 0,
-      variables: message2.variables
+      text: (0, import_normalize_text.normalizeDiacritics)(message.text),
+      suffix: message.suffix ? (0, import_normalize_text.normalizeDiacritics)(message.suffix) : void 0,
+      prefix: message.prefix ? (0, import_normalize_text.normalizeDiacritics)(message.prefix) : void 0,
+      variables: message.variables
     };
   }
 };
-var message = new SMS({
-  message: {
-    prefix: "STORE TANANANA",
-    text: "Hello World!",
-    suffix: "PEDIDO #123",
-    variables: {
-      chave: "valor"
-    }
-  },
-  recipient: {
-    phone: "N\xFAmero onde a mensagem ser\xE1 enviada."
-  },
-  externalId: "1234"
-}, {
-  shortify: true,
-  char: 160
-});
 
 // lib/domain/entities/message/whatsapp.ts
 var Whatsapp = class {
-  constructor({ message: message2, recipient, externalId }) {
+  constructor({ message, recipient, externalId }) {
     this.channel = "whatsapp";
     this.externalId = externalId;
-    this.message = message2;
+    this.message = message;
     this.recipient = recipient;
   }
   getMessage() {
