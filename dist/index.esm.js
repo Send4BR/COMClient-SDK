@@ -10,9 +10,9 @@ var ProviderNotImplemented = class extends Error {
 
 // lib/infra/senders/faker/message.ts
 var _FakerMessageSender = class {
-  async dispatch(message, topic) {
+  async dispatch(message2, topic) {
     console.log("sending message to topic " + topic);
-    _FakerMessageSender.sender.push(message);
+    _FakerMessageSender.sender.push(message2);
   }
   static get messages() {
     return this.sender;
@@ -30,11 +30,11 @@ var MessageServiceBusSender = class {
   constructor(client) {
     this.client = client;
   }
-  async dispatch(message, topic) {
+  async dispatch(message2, topic) {
     const sender = this.client.createSender(topic);
     try {
       await sender.sendMessages({
-        body: message,
+        body: message2,
         contentType: "application/json"
       });
     } catch (err) {
@@ -72,18 +72,145 @@ var COMClient = class {
     this.connectionString = connectionString;
     this.MESSAGE_QUEUE = `${environment}--send-message`;
   }
-  async dispatch(message) {
+  async dispatch(message2) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
+    await sender.dispatch({ ...message2.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
   }
 };
 
 // lib/domain/entities/message/email.ts
 var Email = class {
-  constructor({ message, recipient, externalId }) {
+  constructor({ message: message2, recipient, externalId }) {
     this.channel = "email";
     this.externalId = externalId;
-    this.message = message;
+    this.message = message2;
+    this.recipient = recipient;
+  }
+  getMessage() {
+    return {
+      channel: this.channel,
+      externalId: this.externalId,
+      recipient: this.recipient,
+      message: this.message
+    };
+  }
+};
+
+// lib/domain/entities/message/sms.ts
+import { normalizeDiacritics } from "normalize-text";
+var SMS = class {
+  constructor({ message: message2, recipient, externalId }, options) {
+    this.channel = "sms";
+    this.RESERVED_SPACE_FORMAT = 3;
+    this.SEE_MORE = "... Veja mais em:";
+    this.externalId = externalId;
+    this.message = this.normalize(message2);
+    this.recipient = recipient;
+    this.replaceVariables();
+    if (options?.shortify) {
+      this.shortify(options.char);
+    }
+    this.build();
+  }
+  getMessage() {
+    return {
+      externalId: this.externalId,
+      message: { text: this.text },
+      channel: this.channel,
+      recipient: this.recipient
+    };
+  }
+  get text() {
+    return this.message.text;
+  }
+  set text(text) {
+    this.message.text = text;
+  }
+  get suffix() {
+    return this.message.suffix;
+  }
+  set suffix(suffix) {
+    this.message.suffix = suffix;
+  }
+  get prefix() {
+    return this.message.prefix;
+  }
+  set prefix(prefix) {
+    this.message.prefix = prefix;
+  }
+  get variables() {
+    return this.message.variables;
+  }
+  shortify(char = 160) {
+    const LINK = "$link";
+    if (this.messageSize > char) {
+      this.createSuffix();
+      this.text = this.text.replace(LINK, "");
+      this.text = this.text = this.text.slice(0, char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT));
+    } else if (this.variables?.link) {
+      this.text = this.text.replace(LINK, this.variables.link);
+    }
+  }
+  createSuffix() {
+    this.suffix = this.variables?.link ? `${this.SEE_MORE} ${this.variables?.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
+  }
+  build() {
+    if (!this.prefix && !this.suffix)
+      return;
+    if (this.prefix && this.suffix)
+      this.text = `${this.prefix}: ${this.text} ${this.suffix}`;
+    if (!this.prefix)
+      this.text = `${this.text} ${this.suffix}`;
+    if (!this.suffix)
+      this.text = `${this.prefix}: ${this.text}`;
+    this.prefix = void 0;
+    this.suffix = void 0;
+  }
+  get messageSize() {
+    const SMS_LINK_MAX_SIZE = 30;
+    return (this.message.prefix?.length ?? 0) + (this.message.suffix?.length ?? 0) + this.message.text.length + SMS_LINK_MAX_SIZE;
+  }
+  replaceVariables() {
+    const variables = this.variables ?? {};
+    Object.keys(this.variables ?? {}).map((key) => {
+      if (key !== "link") {
+        this.text = this.text.replace("$" + key, variables[key]);
+      }
+    });
+  }
+  normalize(message2) {
+    return {
+      text: normalizeDiacritics(message2.text),
+      suffix: message2.suffix ? normalizeDiacritics(message2.suffix) : void 0,
+      prefix: message2.prefix ? normalizeDiacritics(message2.prefix) : void 0,
+      variables: message2.variables
+    };
+  }
+};
+var message = new SMS({
+  message: {
+    prefix: "STORE TANANANA",
+    text: "Hello World!",
+    suffix: "PEDIDO #123",
+    variables: {
+      chave: "valor"
+    }
+  },
+  recipient: {
+    phone: "N\xFAmero onde a mensagem ser\xE1 enviada."
+  },
+  externalId: "1234"
+}, {
+  shortify: true,
+  char: 160
+});
+
+// lib/domain/entities/message/whatsapp.ts
+var Whatsapp = class {
+  constructor({ message: message2, recipient, externalId }) {
+    this.channel = "whatsapp";
+    this.externalId = externalId;
+    this.message = message2;
     this.recipient = recipient;
   }
   getMessage() {
@@ -117,5 +244,7 @@ export {
   COMClient,
   COMInternal,
   Email,
-  FakerMessageSender
+  FakerMessageSender,
+  SMS,
+  Whatsapp
 };

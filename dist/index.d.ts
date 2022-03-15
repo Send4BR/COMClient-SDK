@@ -161,6 +161,8 @@ declare module '@aftersale/comclient-sdk/lib/errors/provider-not-implemented' {
 declare module '@aftersale/comclient-sdk/lib/index' {
   export * from '@aftersale/comclient-sdk/lib/domain/service/client';
   export * from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
+  export * from '@aftersale/comclient-sdk/lib/domain/entities/message/sms';
+  export * from '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp';
   export * from '@aftersale/comclient-sdk/lib/domain/service/internal-client';
   export * from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
 
@@ -180,8 +182,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
-      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
+      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
+      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
   }
 
 }
