@@ -102,7 +102,7 @@ import { normalizeDiacritics } from "normalize-text";
 // lib/domain/service/smsshortify.ts
 var SMSShortify = class {
   constructor({ text, prefix, suffix, link }) {
-    this.RESERVED_SPACE_FORMAT = 3;
+    this.RESERVED_SPACE_FORMAT = 2;
     this.SEE_MORE = "... Veja mais em:";
     this.LINK_VARIABLE = "$link";
     this.text = text;

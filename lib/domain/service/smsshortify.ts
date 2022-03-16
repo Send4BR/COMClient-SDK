@@ -7,7 +7,7 @@ type SMSShortifyType = {
 };
 
 export class SMSShortify {
-  private readonly RESERVED_SPACE_FORMAT = 3
+  private readonly RESERVED_SPACE_FORMAT = 2
   private readonly SEE_MORE = '... Veja mais em:'
   private readonly LINK_VARIABLE = '$link'
   private text: string

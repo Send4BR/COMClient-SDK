@@ -56,7 +56,7 @@ tap.test('should send a email message using fake provider', async (t) => {
     const message = new SMS(
       {
         message: {
-          prefix: 'Loja da Ana',
+          prefix: 'Loja da Ana:',
           text: 'É isso aí Como a gente achou que ia ser A vida tão simples é boa Quase sempre É isso aí Os passos vão pelas ruas E nem reparou na lua A vida sempre continua',
           suffix: 'PEDIDO #1234',
           variables: { link: 'https://lojadaana.delivery.after.sale/order/1234' }

@@ -25,7 +25,7 @@ tap.test('should have need props', (t) => {
 tap.test('should normalize diacritics in message', (t) => {
   const msg = new SMS({
     message: {
-      prefix: 'Loja da Ana',
+      prefix: 'Loja da Ana:',
       text: 'É isso ai, Como a gente achou que ia ser',
       suffix: 'PEDIDO #123'
     },
@@ -57,7 +57,7 @@ tap.test('should normalize diacritics in message', (t) => {
   tap.test('should return message with suffix', (t) => {
     const msg = new SMS({
       message: {
-        prefix: 'Loja da Ana',
+        prefix: 'Loja da Ana:',
         text: 'É isso ai, Como a gente achou que ia ser'
       },
       recipient
@@ -116,7 +116,7 @@ tap.test('SMS shortify', (t) => {
     const msg = new SMS(
       {
         message: {
-          prefix: 'Batshop',
+          prefix: 'Batshop:',
           text: mockMessage.shortWithLink,
           suffix: '#4421321',
           variables: { link }
@@ -140,7 +140,7 @@ tap.test('SMS shortify', (t) => {
     const msg = new SMS(
       {
         message: {
-          prefix: 'Batshop',
+          prefix: 'Batshop:',
           text: mockMessage.long,
           suffix: '#4421321',
           variables: { link }
@@ -164,7 +164,7 @@ tap.test('SMS shortify', (t) => {
     const msg = new SMS(
       {
         message: {
-          prefix: 'Batshop',
+          prefix: 'Batshop:',
           text: mockMessage.longWithoutLink,
           suffix: '#4421321',
           variables: { link }
@@ -188,7 +188,7 @@ tap.test('SMS shortify', (t) => {
     const msg = new SMS(
       {
         message: {
-          prefix: 'Batshop',
+          prefix: 'Batshop:',
           text: mockMessage.longWithTwoVariablesAndLink,
           suffix: '#4421321',
           variables: { link, name: 'Batman', anotherVariable: 'OUTRA VARIAVEL' }
@@ -245,7 +245,7 @@ tap.test('SMS shortify', (t) => {
 
     t.equal(
       message.text,
-      'Sua entrega esta a caminho logo logo voce tera o melhor produto perto de voce, sua encomenda esta bem proximo do m ... Veja mais em: www.trakr.com.br/tracking'
+      'Sua entrega esta a caminho logo logo voce tera o melhor produto perto de voce, sua encomenda esta bem proximo do mo ... Veja mais em: www.trakr.com.br/tracking'
     )
     t.equal(message.text.length <= 160, true)
     t.end()
