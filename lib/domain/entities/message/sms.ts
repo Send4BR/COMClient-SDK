@@ -59,10 +59,7 @@ export class SMS implements Message {
   }
 
   private format() {
-    if (!this.prefix && !this.suffix) return
-    if (this.prefix && this.suffix) this.text = `${this.prefix} ${this.text} ${this.suffix}`
-    if (!this.prefix) this.text = `${this.text} ${this.suffix}`
-    if (!this.suffix) this.text = `${this.prefix} ${this.text}`
+    this.text = (`${this.prefix ?? ''} ${this.text} ${this.suffix ?? ''}`).trim()
   }
 
   private get text() {
