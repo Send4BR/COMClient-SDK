@@ -17,45 +17,58 @@ export type SMSData = {
   recipient: RecipientType;
 } & MessageData;
 
-type SMSOptions = {
-  shortify?: boolean;
-  char?: number;
-};
-
 export class SMS implements Message {
   readonly channel: string = 'sms'
   readonly externalId?: string
-  readonly recipient: RecipientType
+  private readonly recipient: RecipientType
   private readonly message: MessageType
   private readonly RESERVED_SPACE_FORMAT = 3
   private readonly SEE_MORE = '... Veja mais em:'
 
-  constructor(
-    { message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>,
-    options?: SMSOptions
-  ) {
+  constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>) {
     this.externalId = externalId
     this.message = this.normalize(message)
     this.recipient = recipient
     this.replaceVariables()
-
-    if (options?.shortify) {
-      this.shortify(options.char)
-    }
-
-    this.build()
   }
 
-  getMessage(): SMSData {
+  public getMessage(): SMSData {
+    this.format()
+
     return {
       externalId: this.externalId,
-      message: { text: this.text },
+      message: {
+        text: this.text
+      },
       channel: this.channel,
       recipient: this.recipient
     }
   }
 
-  get text() {
+  public shortify(char = 160) {
+    const LINK = '$link'
+    if (this.messageSize > char) {
+      this.createSuffix()
+      this.text = this.text.replace(LINK, '')
+      this.text = this.text.slice(
+        0,
+        char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT)
+      )
+    } else if (this.variables?.link) {
+      this.text = this.text.replace(LINK, this.variables.link)
+    }
+
+    return this
+  }
+
+  private format() {
+    if (!this.prefix && !this.suffix) return
+    if (this.prefix && this.suffix) this.text = `${this.prefix}: ${this.text} ${this.suffix}`
+    if (!this.prefix) this.text = `${this.text} ${this.suffix}`
+    if (!this.suffix) this.text = `${this.prefix}: ${this.text}`
+  }
+
+  private get text() {
     return this.message.text
   }
 
@@ -63,7 +76,7 @@ export class SMS implements Message {
     this.message.text = text
   }
 
-  get suffix() {
+  private get suffix() {
     return this.message.suffix
   }
 
@@ -71,7 +84,7 @@ export class SMS implements Message {
     this.message.suffix = suffix
   }
 
-  get prefix() {
+  private get prefix() {
     return this.message.prefix
   }
 
@@ -79,31 +92,10 @@ export class SMS implements Message {
     return this.message.variables
   }
 
-  private shortify(char = 160) {
-    const LINK = '$link'
-    if (this.messageSize > char) {
-      this.createSuffix()
-      this.text = this.text.replace(LINK, '')
-      this.text = this.text = this.text.slice(
-        0,
-        char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT)
-      )
-    } else if (this.variables?.link) {
-      this.text = this.text.replace(LINK, this.variables.link)
-    }
-  }
-
   private createSuffix() {
     this.suffix = this.variables?.link
       ? `${this.SEE_MORE} ${this.variables?.link}${this.suffix ? ` ${this.suffix}` : ''}`
       : undefined
-  }
-
-  private build() {
-    if (!this.prefix && !this.suffix) return
-    if (this.prefix && this.suffix) this.text = `${this.prefix}: ${this.text} ${this.suffix}`
-    if (!this.prefix) this.text = `${this.text} ${this.suffix}`
-    if (!this.suffix) this.text = `${this.prefix}: ${this.text}`
   }
 
   private get messageSize() {

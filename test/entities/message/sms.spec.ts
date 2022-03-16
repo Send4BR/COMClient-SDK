@@ -17,13 +17,13 @@ tap.test('should have need props', (t) => {
   const message = new SMS({ message: { text: 'test' }, recipient })
 
   t.equal(message.channel, 'sms')
-  t.equal(message.text, 'test')
+  t.equal(message.getMessage().message.text, 'test')
 
   t.end()
 })
 
 tap.test('should normalize diacritics in message', (t) => {
-  const message = new SMS({
+  const msg = new SMS({
     message: {
       prefix: 'Loja da Ana',
       text: 'É isso ai, Como a gente achou que ia ser',
@@ -32,12 +32,14 @@ tap.test('should normalize diacritics in message', (t) => {
     recipient
   })
 
+  const { message } = msg.getMessage()
+
   t.equal(message.text, 'Loja da Ana: E isso ai, Como a gente achou que ia ser PEDIDO #123')
 
   t.end()
 
   tap.test('should return message with prefix', (t) => {
-    const message = new SMS({
+    const msg = new SMS({
       message: {
         text: 'É isso ai, Como a gente achou que ia ser',
         suffix: 'PEDIDO #123'
@@ -45,19 +47,23 @@ tap.test('should normalize diacritics in message', (t) => {
       recipient
     })
 
+    const { message } = msg.getMessage()
+
     t.equal(message.text, 'E isso ai, Como a gente achou que ia ser PEDIDO #123')
 
     t.end()
   })
 
   tap.test('should return message with suffix', (t) => {
-    const message = new SMS({
+    const msg = new SMS({
       message: {
         prefix: 'Loja da Ana',
         text: 'É isso ai, Como a gente achou que ia ser'
       },
       recipient
     })
+
+    const { message } = msg.getMessage()
 
     t.equal(message.text, 'Loja da Ana: E isso ai, Como a gente achou que ia ser')
 
@@ -67,17 +73,17 @@ tap.test('should normalize diacritics in message', (t) => {
 
 tap.test('SMS shortify', (t) => {
   t.test('should return message if prefix and suffix not provided', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           text: mockMessage.short
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(message.text, 'Sua entrega esta a caminho')
     t.equal(message.text.length <= 160, true)
@@ -85,18 +91,18 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return message with link if prefix and suffix not provided', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           text: mockMessage.shortWithLink,
           variables: { link }
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -107,7 +113,7 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return message formatted with link', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           prefix: 'Batshop',
@@ -116,11 +122,11 @@ tap.test('SMS shortify', (t) => {
           variables: { link }
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -131,7 +137,7 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return long message correctly with link', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           prefix: 'Batshop',
@@ -140,11 +146,11 @@ tap.test('SMS shortify', (t) => {
           variables: { link }
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -155,7 +161,7 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return long message correctly without link', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           prefix: 'Batshop',
@@ -164,11 +170,11 @@ tap.test('SMS shortify', (t) => {
           variables: { link }
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -179,7 +185,7 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return long message correctly with replaces', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           prefix: 'Batshop',
@@ -188,11 +194,11 @@ tap.test('SMS shortify', (t) => {
           variables: { link, name: 'Batman', anotherVariable: 'OUTRA VARIAVEL' }
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -203,17 +209,17 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return long message correctly without prefix & suffix', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           text: mockMessage.longWithoutLink
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -224,18 +230,18 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return long message correctly with link but without prefix & suffix', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           text: mockMessage.long,
           variables: { link }
         },
         recipient
-      },
-      {
-        shortify: true
       }
     )
+    msg.shortify()
+
+    const { message } = msg.getMessage()
 
     t.equal(
       message.text,
@@ -246,19 +252,17 @@ tap.test('SMS shortify', (t) => {
   })
 
   t.test('should return long message correctly with link but without prefix & suffix and 240 char', (t) => {
-    const message = new SMS(
+    const msg = new SMS(
       {
         message: {
           text: mockMessage.long,
           variables: { link }
         },
         recipient
-      },
-      {
-        shortify: true,
-        char: 240
       }
     )
+
+    const { message } = msg.getMessage()
 
     t.equal(message.text.length <= 240, true)
     t.end()

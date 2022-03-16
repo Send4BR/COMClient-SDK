@@ -62,13 +62,15 @@ tap.test('should send a email message using fake provider', async (t) => {
           variables: { link: 'https://lojadaana.delivery.after.sale/order/1234' }
         },
         recipient: { phone: '909000000000' }
-      },
-      { shortify: true }
+      }
     )
 
+    message.shortify()
+
     await client.dispatch(message)
+
     t.equal(FakerMessageSender.messages.length, 1)
-    t.match(FakerMessageSender.messages[0], message.getMessage())
+    t.equal((FakerMessageSender.messages[0] as any).message.text, 'Loja da Ana: E isso ai Como a gente achou que ia ser A vida tao simples e boa Qu ... Veja mais em: https://lojadaana.delivery.after.sale/order/1234 PEDIDO #1234')
     t.end()
   })
 })

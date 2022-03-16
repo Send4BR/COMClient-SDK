@@ -50,28 +50,24 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
-  type SMSOptions = {
-      shortify?: boolean;
-      char?: number;
-  };
   export class SMS implements Message {
       readonly channel: string;
       readonly externalId?: string;
-      readonly recipient: RecipientType;
+      private readonly recipient;
       private readonly message;
       private readonly RESERVED_SPACE_FORMAT;
       private readonly SEE_MORE;
-      constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>, options?: SMSOptions);
+      constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>);
       getMessage(): SMSData;
-      get text(): string;
+      shortify(char?: number): this;
+      private format;
+      private get text();
       private set text(value);
-      get suffix(): string | undefined;
+      private get suffix();
       private set suffix(value);
-      get prefix(): string | undefined;
+      private get prefix();
       private get variables();
-      private shortify;
       private createSuffix;
-      private build;
       private get messageSize();
       private replaceVariables;
       private normalize;

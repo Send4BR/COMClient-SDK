@@ -133,7 +133,7 @@ var Email = class {
 // lib/domain/entities/message/sms.ts
 var import_normalize_text = require("normalize-text");
 var SMS = class {
-  constructor({ message, recipient, externalId }, options) {
+  constructor({ message, recipient, externalId }) {
     this.channel = "sms";
     this.RESERVED_SPACE_FORMAT = 3;
     this.SEE_MORE = "... Veja mais em:";
@@ -141,18 +141,38 @@ var SMS = class {
     this.message = this.normalize(message);
     this.recipient = recipient;
     this.replaceVariables();
-    if (options?.shortify) {
-      this.shortify(options.char);
-    }
-    this.build();
   }
   getMessage() {
+    this.format();
     return {
       externalId: this.externalId,
-      message: { text: this.text },
+      message: {
+        text: this.text
+      },
       channel: this.channel,
       recipient: this.recipient
     };
+  }
+  shortify(char = 160) {
+    const LINK = "$link";
+    if (this.messageSize > char) {
+      this.createSuffix();
+      this.text = this.text.replace(LINK, "");
+      this.text = this.text.slice(0, char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT));
+    } else if (this.variables?.link) {
+      this.text = this.text.replace(LINK, this.variables.link);
+    }
+    return this;
+  }
+  format() {
+    if (!this.prefix && !this.suffix)
+      return;
+    if (this.prefix && this.suffix)
+      this.text = `${this.prefix}: ${this.text} ${this.suffix}`;
+    if (!this.prefix)
+      this.text = `${this.text} ${this.suffix}`;
+    if (!this.suffix)
+      this.text = `${this.prefix}: ${this.text}`;
   }
   get text() {
     return this.message.text;
@@ -172,28 +192,8 @@ var SMS = class {
   get variables() {
     return this.message.variables;
   }
-  shortify(char = 160) {
-    const LINK = "$link";
-    if (this.messageSize > char) {
-      this.createSuffix();
-      this.text = this.text.replace(LINK, "");
-      this.text = this.text = this.text.slice(0, char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT));
-    } else if (this.variables?.link) {
-      this.text = this.text.replace(LINK, this.variables.link);
-    }
-  }
   createSuffix() {
     this.suffix = this.variables?.link ? `${this.SEE_MORE} ${this.variables?.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
-  }
-  build() {
-    if (!this.prefix && !this.suffix)
-      return;
-    if (this.prefix && this.suffix)
-      this.text = `${this.prefix}: ${this.text} ${this.suffix}`;
-    if (!this.prefix)
-      this.text = `${this.text} ${this.suffix}`;
-    if (!this.suffix)
-      this.text = `${this.prefix}: ${this.text}`;
   }
   get messageSize() {
     const SMS_LINK_MAX_SIZE = 30;
