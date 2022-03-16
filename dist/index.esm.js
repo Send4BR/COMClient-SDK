@@ -114,11 +114,14 @@ var SMSShortify = class {
     if (this.messageSize > char) {
       this.createSuffix();
       this.text = this.text.replace(this.LINK_VARIABLE, "");
-      this.text = this.text.slice(0, char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT));
+      this.text = this.text.slice(0, this.calculateSlice(char));
       return { text: this.text, prefix: this.prefix, suffix: this.suffix };
     }
     this.text = this.link ? this.text.replace(this.LINK_VARIABLE, this.link) : this.text;
     return { text: this.text, prefix: this.prefix, suffix: this.suffix };
+  }
+  calculateSlice(char) {
+    return char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT);
   }
   createSuffix() {
     this.suffix = this.link ? `${this.SEE_MORE} ${this.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
@@ -164,11 +167,11 @@ var SMS = class {
     if (!this.prefix && !this.suffix)
       return;
     if (this.prefix && this.suffix)
-      this.text = `${this.prefix}: ${this.text} ${this.suffix}`;
+      this.text = `${this.prefix} ${this.text} ${this.suffix}`;
     if (!this.prefix)
       this.text = `${this.text} ${this.suffix}`;
     if (!this.suffix)
-      this.text = `${this.prefix}: ${this.text}`;
+      this.text = `${this.prefix} ${this.text}`;
   }
   get text() {
     return this.message.text;

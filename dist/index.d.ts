@@ -167,6 +167,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/smsshortify' {
           prefix: string | undefined;
           suffix: string | undefined;
       };
+      private calculateSlice;
       private createSuffix;
       private get messageSize();
   }
