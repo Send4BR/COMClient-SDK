@@ -1,5 +1,6 @@
 import { Message, MessageData } from './message'
 import { normalizeDiacritics } from 'normalize-text'
+import { SMSShortify } from '../../service/smsshortify'
 
 type MessageType = {
   prefix?: string;
@@ -22,14 +23,19 @@ export class SMS implements Message {
   readonly externalId?: string
   private readonly recipient: RecipientType
   private readonly message: MessageType
-  private readonly RESERVED_SPACE_FORMAT = 3
-  private readonly SEE_MORE = '... Veja mais em:'
+  private readonly shortifyService: SMSShortify
 
   constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>) {
     this.externalId = externalId
     this.message = this.normalize(message)
     this.recipient = recipient
     this.replaceVariables()
+    this.shortifyService = new SMSShortify({
+      text: this.text,
+      prefix: this.prefix,
+      suffix: this.suffix,
+      link: this.variables?.link
+    })
   }
 
   public getMessage(): SMSData {
@@ -46,19 +52,10 @@ export class SMS implements Message {
   }
 
   public shortify(char = 160) {
-    const LINK = '$link'
-    if (this.messageSize > char) {
-      this.createSuffix()
-      this.text = this.text.replace(LINK, '')
-      this.text = this.text.slice(
-        0,
-        char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT)
-      )
-    } else if (this.variables?.link) {
-      this.text = this.text.replace(LINK, this.variables.link)
-    }
-
-    return this
+    const { text, prefix, suffix } = this.shortifyService.execute(char)
+    this.text = text
+    this.prefix = prefix
+    this.suffix = suffix
   }
 
   private format() {
@@ -88,24 +85,12 @@ export class SMS implements Message {
     return this.message.prefix
   }
 
+  private set prefix(prefix: string | undefined) {
+    this.message.prefix = prefix
+  }
+
   private get variables() {
     return this.message.variables
-  }
-
-  private createSuffix() {
-    this.suffix = this.variables?.link
-      ? `${this.SEE_MORE} ${this.variables?.link}${this.suffix ? ` ${this.suffix}` : ''}`
-      : undefined
-  }
-
-  private get messageSize() {
-    const SMS_LINK_MAX_SIZE = 30
-    return (
-      (this.message.prefix?.length ?? 0) +
-      (this.message.suffix?.length ?? 0) +
-      this.message.text.length +
-      SMS_LINK_MAX_SIZE
-    )
   }
 
   private replaceVariables() {

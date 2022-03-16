@@ -97,7 +97,7 @@ var _SenderFactory = class {
 var SenderFactory = _SenderFactory;
 SenderFactory.senders = [MessageServiceBusSender, FakerMessageSender];
 
-// lib/domain/service/client.ts
+// lib/application/service/client.ts
 var COMClient = class {
   constructor({ environment = "production", provider = "servicebus", connectionString, origin, clientId }) {
     this.provider = provider;
@@ -132,15 +132,51 @@ var Email = class {
 
 // lib/domain/entities/message/sms.ts
 var import_normalize_text = require("normalize-text");
+
+// lib/domain/service/smsshortify.ts
+var SMSShortify = class {
+  constructor({ text, prefix, suffix, link }) {
+    this.RESERVED_SPACE_FORMAT = 3;
+    this.SEE_MORE = "... Veja mais em:";
+    this.SMS_LINK_MAX_SIZE = 30;
+    this.LINK_VARIABLE = "$link";
+    this.text = text;
+    this.prefix = prefix;
+    this.suffix = suffix;
+    this.link = link;
+  }
+  execute(char = 160) {
+    if (this.messageSize > char) {
+      this.createSuffix();
+      this.text = this.text.replace(this.LINK_VARIABLE, "");
+      this.text = this.text.slice(0, char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT));
+      return { text: this.text, prefix: this.prefix, suffix: this.suffix };
+    }
+    this.text = this.link ? this.text.replace(this.LINK_VARIABLE, this.link) : this.text;
+    return { text: this.text, prefix: this.prefix, suffix: this.suffix };
+  }
+  createSuffix() {
+    this.suffix = this.link ? `${this.SEE_MORE} ${this.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
+  }
+  get messageSize() {
+    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.text.length + this.SMS_LINK_MAX_SIZE;
+  }
+};
+
+// lib/domain/entities/message/sms.ts
 var SMS = class {
   constructor({ message, recipient, externalId }) {
     this.channel = "sms";
-    this.RESERVED_SPACE_FORMAT = 3;
-    this.SEE_MORE = "... Veja mais em:";
     this.externalId = externalId;
     this.message = this.normalize(message);
     this.recipient = recipient;
     this.replaceVariables();
+    this.shortifyService = new SMSShortify({
+      text: this.text,
+      prefix: this.prefix,
+      suffix: this.suffix,
+      link: this.variables?.link
+    });
   }
   getMessage() {
     this.format();
@@ -154,15 +190,10 @@ var SMS = class {
     };
   }
   shortify(char = 160) {
-    const LINK = "$link";
-    if (this.messageSize > char) {
-      this.createSuffix();
-      this.text = this.text.replace(LINK, "");
-      this.text = this.text.slice(0, char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT));
-    } else if (this.variables?.link) {
-      this.text = this.text.replace(LINK, this.variables.link);
-    }
-    return this;
+    const { text, prefix, suffix } = this.shortifyService.execute(char);
+    this.text = text;
+    this.prefix = prefix;
+    this.suffix = suffix;
   }
   format() {
     if (!this.prefix && !this.suffix)
@@ -189,15 +220,11 @@ var SMS = class {
   get prefix() {
     return this.message.prefix;
   }
+  set prefix(prefix) {
+    this.message.prefix = prefix;
+  }
   get variables() {
     return this.message.variables;
-  }
-  createSuffix() {
-    this.suffix = this.variables?.link ? `${this.SEE_MORE} ${this.variables?.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
-  }
-  get messageSize() {
-    const SMS_LINK_MAX_SIZE = 30;
-    return (this.message.prefix?.length ?? 0) + (this.message.suffix?.length ?? 0) + this.message.text.length + SMS_LINK_MAX_SIZE;
   }
   replaceVariables() {
     const variables = this.variables ?? {};
@@ -235,7 +262,7 @@ var Whatsapp = class {
   }
 };
 
-// lib/domain/service/internal-client.ts
+// lib/application/service/internal-client.ts
 var COMInternal = class {
   constructor({ environment = "production", provider = "servicebus", connectionString }) {
     this.provider = provider;

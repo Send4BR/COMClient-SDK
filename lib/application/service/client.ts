@@ -1,7 +1,7 @@
-import { Email } from '../entities/message/email'
+import { Email } from '../../domain/entities/message/email'
 import SenderFactory from '../../infra/senders/sender-factory'
-import { SMS } from '../entities/message/sms'
-import { Whatsapp } from '../entities/message/whatsapp'
+import { SMS } from '../../domain/entities/message/sms'
+import { Whatsapp } from '../../domain/entities/message/whatsapp'
 
 type ClientParams = {
   environment?: string;

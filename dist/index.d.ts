@@ -1,3 +1,49 @@
+declare module '@aftersale/comclient-sdk/lib/application/service/client' {
+  import { Email } from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
+  import { SMS } from '@aftersale/comclient-sdk/lib/domain/entities/message/sms';
+  import { Whatsapp } from '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp';
+  type ClientParams = {
+      environment?: string;
+      provider?: string;
+      connectionString: string;
+      origin: string;
+      clientId: string;
+  };
+  export class COMClient {
+      private readonly provider;
+      private readonly origin;
+      private readonly clientId;
+      private readonly MESSAGE_QUEUE;
+      private readonly connectionString;
+      constructor({ environment, provider, connectionString, origin, clientId }: ClientParams);
+      dispatch(message: Email | SMS | Whatsapp): Promise<void>;
+  }
+  export {};
+
+}
+declare module '@aftersale/comclient-sdk/lib/application/service/internal-client' {
+  type Params = {
+      environment?: string;
+      provider?: string;
+      connectionString: string;
+  };
+  type MessageData = {
+      id: string;
+      error?: string;
+      sentAt?: number;
+  };
+  export class COMInternal {
+      private readonly provider;
+      private readonly ERROR_QUEUE;
+      private readonly SUCCESS_QUEUE;
+      private readonly connectionString;
+      constructor({ environment, provider, connectionString }: Params);
+      error(data: MessageData): Promise<void>;
+      success(data: MessageData): Promise<void>;
+  }
+  export {};
+
+}
 declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
   import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
   type MessageType = {
@@ -55,20 +101,18 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       readonly externalId?: string;
       private readonly recipient;
       private readonly message;
-      private readonly RESERVED_SPACE_FORMAT;
-      private readonly SEE_MORE;
+      private readonly shortifyService;
       constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>);
       getMessage(): SMSData;
-      shortify(char?: number): this;
+      shortify(char?: number): void;
       private format;
       private get text();
       private set text(value);
       private get suffix();
       private set suffix(value);
       private get prefix();
+      private set prefix(value);
       private get variables();
-      private createSuffix;
-      private get messageSize();
       private replaceVariables;
       private normalize;
   }
@@ -101,48 +145,31 @@ declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher
   }
 
 }
-declare module '@aftersale/comclient-sdk/lib/domain/service/client' {
-  import { Email } from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
-  import { SMS } from '@aftersale/comclient-sdk/lib/domain/entities/message/sms';
-  import { Whatsapp } from '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp';
-  type ClientParams = {
-      environment?: string;
-      provider?: string;
-      connectionString: string;
-      origin: string;
-      clientId: string;
+declare module '@aftersale/comclient-sdk/lib/domain/service/smsshortify' {
+  type SMSShortifyType = {
+      prefix?: string;
+      text: string;
+      suffix?: string;
+      variables?: string;
+      link?: string;
   };
-  export class COMClient {
-      private readonly provider;
-      private readonly origin;
-      private readonly clientId;
-      private readonly MESSAGE_QUEUE;
-      private readonly connectionString;
-      constructor({ environment, provider, connectionString, origin, clientId }: ClientParams);
-      dispatch(message: Email | SMS | Whatsapp): Promise<void>;
-  }
-  export {};
-
-}
-declare module '@aftersale/comclient-sdk/lib/domain/service/internal-client' {
-  type Params = {
-      environment?: string;
-      provider?: string;
-      connectionString: string;
-  };
-  type MessageData = {
-      id: string;
-      error?: string;
-      sentAt?: number;
-  };
-  export class COMInternal {
-      private readonly provider;
-      private readonly ERROR_QUEUE;
-      private readonly SUCCESS_QUEUE;
-      private readonly connectionString;
-      constructor({ environment, provider, connectionString }: Params);
-      error(data: MessageData): Promise<void>;
-      success(data: MessageData): Promise<void>;
+  export class SMSShortify {
+      private readonly RESERVED_SPACE_FORMAT;
+      private readonly SEE_MORE;
+      private readonly SMS_LINK_MAX_SIZE;
+      private readonly LINK_VARIABLE;
+      private text;
+      private prefix?;
+      private suffix?;
+      private link?;
+      constructor({ text, prefix, suffix, link }: SMSShortifyType);
+      execute(char?: number): {
+          text: string;
+          prefix: string | undefined;
+          suffix: string | undefined;
+      };
+      private createSuffix;
+      private get messageSize();
   }
   export {};
 
@@ -154,11 +181,11 @@ declare module '@aftersale/comclient-sdk/lib/errors/provider-not-implemented' {
 
 }
 declare module '@aftersale/comclient-sdk/lib/index' {
-  export * from '@aftersale/comclient-sdk/lib/domain/service/client';
+  export * from '@aftersale/comclient-sdk/lib/application/service/client';
   export * from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
   export * from '@aftersale/comclient-sdk/lib/domain/entities/message/sms';
   export * from '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp';
-  export * from '@aftersale/comclient-sdk/lib/domain/service/internal-client';
+  export * from '@aftersale/comclient-sdk/lib/application/service/internal-client';
   export * from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
 
 }
