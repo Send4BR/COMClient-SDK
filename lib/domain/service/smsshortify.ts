@@ -9,7 +9,6 @@ type SMSShortifyType = {
 export class SMSShortify {
   private readonly RESERVED_SPACE_FORMAT = 3
   private readonly SEE_MORE = '... Veja mais em:'
-  private readonly SMS_LINK_MAX_SIZE = 30
   private readonly LINK_VARIABLE = '$link'
   private text: string
   private prefix?: string
@@ -44,6 +43,6 @@ export class SMSShortify {
   }
 
   private get messageSize() {
-    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.text.length + this.SMS_LINK_MAX_SIZE
+    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.text.length + (this.link?.length ?? 0)
   }
 }

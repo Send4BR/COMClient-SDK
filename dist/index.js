@@ -138,7 +138,6 @@ var SMSShortify = class {
   constructor({ text, prefix, suffix, link }) {
     this.RESERVED_SPACE_FORMAT = 3;
     this.SEE_MORE = "... Veja mais em:";
-    this.SMS_LINK_MAX_SIZE = 30;
     this.LINK_VARIABLE = "$link";
     this.text = text;
     this.prefix = prefix;
@@ -159,7 +158,7 @@ var SMSShortify = class {
     this.suffix = this.link ? `${this.SEE_MORE} ${this.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
   }
   get messageSize() {
-    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.text.length + this.SMS_LINK_MAX_SIZE;
+    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.text.length + (this.link?.length ?? 0);
   }
 };
 

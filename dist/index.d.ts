@@ -156,7 +156,6 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/smsshortify' {
   export class SMSShortify {
       private readonly RESERVED_SPACE_FORMAT;
       private readonly SEE_MORE;
-      private readonly SMS_LINK_MAX_SIZE;
       private readonly LINK_VARIABLE;
       private text;
       private prefix?;
