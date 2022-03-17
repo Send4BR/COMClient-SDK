@@ -1,6 +1,6 @@
 import tap from 'tap'
 
-import { COMInternal } from '../../../lib/domain/service/internal-client'
+import { COMInternal } from '../../../lib/application/service/internal-client'
 import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
 
 tap.test('should send a success message', async (t) => {
