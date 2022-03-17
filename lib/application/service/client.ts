@@ -1,5 +1,7 @@
-import { Email } from '../entities/message/email'
+import { Email } from '../../domain/entities/message/email'
 import SenderFactory from '../../infra/senders/sender-factory'
+import { SMS } from '../../domain/entities/message/sms'
+import { Whatsapp } from '../../domain/entities/message/whatsapp'
 
 type ClientParams = {
   environment?: string;
@@ -21,12 +23,12 @@ export class COMClient {
     this.origin = origin
     this.clientId = clientId
     this.connectionString = connectionString
-    this.MESSAGE_QUEUE = `${environment}-send-message`
+    this.MESSAGE_QUEUE = `${environment}--send-message`
   }
 
-  public async dispatch(message: Email) {
+  public async dispatch(message: Email | SMS | Whatsapp) {
     const sender = SenderFactory.create(this.provider, this.connectionString)
 
-    await sender.dispatch({ ...message, origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE)
+    await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE)
   }
 }

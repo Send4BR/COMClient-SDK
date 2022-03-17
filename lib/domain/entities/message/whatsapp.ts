@@ -1,33 +1,31 @@
 import { Message, MessageData } from './message'
 
-type MessageType = {
-  from: string,
-  subject: string,
-  body: string
-};
+// type MessageType = {
+//   from: string,
+// };
 
 type RecipientType = {
-    email: string
+    phone: string
 }
 
-type EmailData = {
-  message: MessageType
+type WhatsappData = {
+  message: any
   recipient: RecipientType
 } & MessageData
 
-export class Email implements Message {
-  readonly channel: string = 'email'
+export class Whatsapp implements Message {
+  readonly channel: string = 'whatsapp'
   readonly externalId?: string
-  readonly message: MessageType
+  readonly message: any
   readonly recipient: RecipientType
 
-  constructor({ message, recipient, externalId }: Pick<EmailData, 'message' | 'recipient' | 'externalId'>) {
+  constructor({ message, recipient, externalId }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId'>) {
     this.externalId = externalId
     this.message = message
     this.recipient = recipient
   }
 
-  getMessage(): EmailData {
+  getMessage(): WhatsappData {
     return {
       channel: this.channel,
       externalId: this.externalId,

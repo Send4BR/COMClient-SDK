@@ -1,11 +1,10 @@
 export type MessageData = {
   externalId?: string;
+  channel: string;
 }
 
-export class Message {
-  readonly externalId?: string
-
-  constructor({ externalId }: MessageData) {
-    this.externalId = externalId
-  }
+export interface Message {
+   externalId?: string
+   channel?: string
+   getMessage(): Partial<MessageData>
 }

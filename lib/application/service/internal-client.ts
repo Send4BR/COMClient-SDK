@@ -21,8 +21,8 @@ export class COMInternal {
   constructor({ environment = 'production', provider = 'servicebus', connectionString }: Params) {
     this.provider = provider
     this.connectionString = connectionString
-    this.ERROR_QUEUE = `${environment}-message-fail`
-    this.SUCCESS_QUEUE = `${environment}-message-success`
+    this.ERROR_QUEUE = `${environment}--message-fail`
+    this.SUCCESS_QUEUE = `${environment}--message-success`
   }
 
   public async error(data: MessageData) {

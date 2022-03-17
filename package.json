@@ -42,6 +42,7 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
-    "@azure/service-bus": "^7.5.0"
+    "@azure/service-bus": "^7.5.0",
+    "normalize-text": "^2.4.0"
   }
 }

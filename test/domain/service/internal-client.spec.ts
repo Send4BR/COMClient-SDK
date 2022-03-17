@@ -1,6 +1,6 @@
 import tap from 'tap'
 
-import { COMInternal } from '../../../lib/domain/service/internal-client'
+import { COMInternal } from '../../../lib/application/service/internal-client'
 import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
 
 tap.test('should send a success message', async (t) => {
@@ -12,7 +12,7 @@ tap.test('should send a success message', async (t) => {
 
   const message = {
     id: '2323232',
-    message: 'Tudo certo por aqui!'
+    sentAt: 1647261032
   }
 
   await client.success(message)
