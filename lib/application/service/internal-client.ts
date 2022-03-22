@@ -10,7 +10,7 @@ type MessageData = {
   id: string,
   error?: string,
   sentAt?: number,
-  canRetry?: boolean
+  retrievable?: boolean
 }
 
 export class COMInternal {

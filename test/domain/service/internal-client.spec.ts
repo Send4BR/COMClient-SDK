@@ -47,13 +47,13 @@ tap.test('should send can retry flag', async (t) => {
   const message = {
     id: '2323232',
     error: 'Deu ruim no envio, meu bom',
-    canRetry: true
+    retrievable: true
   }
 
   await client.error(message)
 
   t.equal(FakerMessageSender.messages.length, 1)
-  t.equal((FakerMessageSender.messages[0] as { canRetry: boolean }).canRetry, true)
+  t.equal((FakerMessageSender.messages[0] as { retrievable: boolean }).retrievable, true)
   t.end()
 })
 
@@ -72,6 +72,6 @@ tap.test('should can retry flag be falsy when not passed', async (t) => {
   await client.error(message)
 
   t.equal(FakerMessageSender.messages.length, 1)
-  t.equal(!!(FakerMessageSender.messages[0] as { canRetry: boolean }).canRetry, false)
+  t.equal(!!(FakerMessageSender.messages[0] as { retrievable: boolean }).retrievable, false)
   t.end()
 })
