@@ -33,6 +33,9 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       sentAt?: Date;
       retrievable?: boolean;
   };
+  type Success = Omit<MessageData, 'sentAt'> & {
+      sentAt: Date;
+  };
   export class COMInternal {
       private readonly provider;
       private readonly ERROR_QUEUE;
@@ -40,7 +43,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       private readonly connectionString;
       constructor({ environment, provider, connectionString }: Params);
       error(data: MessageData): Promise<void>;
-      success(data: MessageData): Promise<void>;
+      success(data: Success): Promise<void>;
   }
   export {};
 
@@ -232,8 +235,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
   }
 
 }

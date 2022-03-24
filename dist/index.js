@@ -273,11 +273,11 @@ var COMInternal = class {
   }
   async error(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    return await sender.dispatch(data, this.ERROR_QUEUE);
+    return await sender.dispatch({ ...data, sentAt: data.sentAt?.toISOString() }, this.ERROR_QUEUE);
   }
   async success(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    return await sender.dispatch({ ...data, sentAt: data.sentAt?.toISOString() }, this.SUCCESS_QUEUE);
+    return await sender.dispatch({ ...data, sentAt: data.sentAt.toISOString() }, this.SUCCESS_QUEUE);
   }
 };
 module.exports = __toCommonJS(lib_exports);
