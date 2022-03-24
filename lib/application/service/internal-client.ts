@@ -6,10 +6,10 @@ type Params = {
   connectionString: string;
 };
 
-type MessageData = {
+export type MessageData = {
   id: string,
   error?: string,
-  sentAt?: number,
+  sentAt?: Date,
 }
 
 export class COMInternal {
@@ -34,6 +34,6 @@ export class COMInternal {
   public async success(data: MessageData) {
     const sender = SenderFactory.create(this.provider, this.connectionString)
 
-    return await sender.dispatch(data, this.SUCCESS_QUEUE)
+    return await sender.dispatch({ ...data, sentAt: data.sentAt?.toISOString() }, this.SUCCESS_QUEUE)
   }
 }
