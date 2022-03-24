@@ -20,11 +20,5 @@ jobs:
         run: npm install
 
       - name: Test affected code
-        run: npm run test | sed -n '59,$p' > .github/workflows/COVERAGE_REPORT
+        run: npm run test
 
-      - name: Publish results
-        uses: harupy/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          filename: COVERAGE_REPORT

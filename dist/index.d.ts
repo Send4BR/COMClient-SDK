@@ -31,6 +31,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       id: string;
       error?: string;
       sentAt?: Date;
+      retrievable?: boolean;
   };
   export class COMInternal {
       private readonly provider;
@@ -231,8 +232,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
   }
 
 }
