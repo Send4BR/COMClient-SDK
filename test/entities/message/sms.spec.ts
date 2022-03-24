@@ -14,10 +14,13 @@ const mockMessage = {
 const link = 'www.trakr.com.br/tracking'
 
 tap.test('should have need props', (t) => {
-  const message = new SMS({ message: { text: 'test' }, recipient })
+  const date = new Date()
+
+  const message = new SMS({ message: { text: 'test' }, recipient, scheduledTo: date })
 
   t.equal(message.channel, 'sms')
   t.equal(message.getMessage().message.text, 'test')
+  t.equal(message.scheduledTo, date.toISOString())
 
   t.end()
 })

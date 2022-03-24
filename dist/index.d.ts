@@ -27,10 +27,10 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       provider?: string;
       connectionString: string;
   };
-  type MessageData = {
+  export type MessageData = {
       id: string;
       error?: string;
-      sentAt?: number;
+      sentAt?: Date;
   };
   export class COMInternal {
       private readonly provider;
@@ -63,8 +63,15 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
       readonly externalId?: string;
       readonly message: MessageType;
       readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId }: Pick<EmailData, 'message' | 'recipient' | 'externalId'>);
-      getMessage(): EmailData;
+      readonly scheduledTo?: string;
+      constructor({ message, recipient, externalId, scheduledTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
+      getMessage(): {
+          channel: string;
+          externalId: string | undefined;
+          recipient: RecipientType;
+          message: MessageType;
+          scheduledTo: string | undefined;
+      };
   }
   export {};
 
@@ -73,11 +80,15 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/message' {
   export type MessageData = {
       externalId?: string;
       channel: string;
+      scheduledTo?: Date;
   };
   export interface Message {
       externalId?: string;
       channel?: string;
-      getMessage(): Partial<MessageData>;
+      scheduledTo?: string;
+      getMessage(): Partial<Omit<MessageData, 'scheduledTo'>> & {
+          scheduledTo?: string;
+      };
   }
 
 }
@@ -99,11 +110,20 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
   export class SMS implements Message {
       readonly channel: string;
       readonly externalId?: string;
+      readonly scheduledTo?: string;
       private readonly recipient;
       private readonly message;
       private readonly shortifyService;
-      constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>);
-      getMessage(): SMSData;
+      constructor({ message, recipient, externalId, scheduledTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
+      getMessage(): {
+          externalId: string | undefined;
+          message: {
+              text: string;
+          };
+          channel: string;
+          recipient: RecipientType;
+          scheduledTo: string | undefined;
+      };
       shortify(char?: number): void;
       private format;
       private get text();
@@ -125,16 +145,23 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       phone: string;
   };
   type WhatsappData = {
-      message: any;
+      message: unknown;
       recipient: RecipientType;
   } & MessageData;
   export class Whatsapp implements Message {
       readonly channel: string;
       readonly externalId?: string;
-      readonly message: any;
+      readonly message: unknown;
+      readonly scheduledTo?: string;
       readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId'>);
-      getMessage(): WhatsappData;
+      constructor({ message, recipient, externalId, scheduledTo }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
+      getMessage(): {
+          channel: string;
+          externalId: string | undefined;
+          recipient: RecipientType;
+          message: unknown;
+          scheduledTo: string | undefined;
+      };
   }
   export {};
 
@@ -204,8 +231,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   export default class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string): FakerMessageSender | MessageServiceBusSender;
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
   }
 
 }

@@ -20,19 +20,22 @@ export class Email implements Message {
   readonly externalId?: string
   readonly message: MessageType
   readonly recipient: RecipientType
+  readonly scheduledTo?: string
 
-  constructor({ message, recipient, externalId }: Pick<EmailData, 'message' | 'recipient' | 'externalId'>) {
+  constructor({ message, recipient, externalId, scheduledTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>) {
     this.externalId = externalId
     this.message = message
     this.recipient = recipient
+    this.scheduledTo = scheduledTo?.toISOString()
   }
 
-  getMessage(): EmailData {
+  getMessage() {
     return {
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
-      message: this.message
+      message: this.message,
+      scheduledTo: this.scheduledTo
     }
   }
 }
