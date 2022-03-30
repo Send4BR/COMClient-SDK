@@ -21,14 +21,16 @@ export type SMSData = {
 export class SMS implements Message {
   readonly channel: string = 'sms'
   readonly externalId?: string
+  readonly scheduledTo?: string
   private readonly recipient: RecipientType
   private readonly message: MessageType
   private readonly shortifyService: SMSShortify
 
-  constructor({ message, recipient, externalId }: Pick<SMSData, 'message' | 'recipient' | 'externalId'>) {
+  constructor({ message, recipient, externalId, scheduledTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>) {
     this.externalId = externalId
     this.message = this.normalize(message)
     this.recipient = recipient
+    this.scheduledTo = scheduledTo?.toISOString()
     this.replaceVariables()
     this.shortifyService = new SMSShortify({
       text: this.text,
@@ -38,7 +40,7 @@ export class SMS implements Message {
     })
   }
 
-  public getMessage(): SMSData {
+  public getMessage() {
     this.format()
 
     return {
@@ -47,7 +49,8 @@ export class SMS implements Message {
         text: this.text
       },
       channel: this.channel,
-      recipient: this.recipient
+      recipient: this.recipient,
+      scheduledTo: this.scheduledTo
     }
   }
 
