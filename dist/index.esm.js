@@ -80,18 +80,20 @@ var COMClient = class {
 
 // lib/domain/entities/message/email.ts
 var Email = class {
-  constructor({ message, recipient, externalId }) {
+  constructor({ message, recipient, externalId, scheduledTo }) {
     this.channel = "email";
     this.externalId = externalId;
     this.message = message;
     this.recipient = recipient;
+    this.scheduledTo = scheduledTo?.toISOString();
   }
   getMessage() {
     return {
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
-      message: this.message
+      message: this.message,
+      scheduledTo: this.scheduledTo
     };
   }
 };
@@ -133,11 +135,12 @@ var SMSShortify = class {
 
 // lib/domain/entities/message/sms.ts
 var SMS = class {
-  constructor({ message, recipient, externalId }) {
+  constructor({ message, recipient, externalId, scheduledTo }) {
     this.channel = "sms";
     this.externalId = externalId;
     this.message = this.normalize(message);
     this.recipient = recipient;
+    this.scheduledTo = scheduledTo?.toISOString();
     this.replaceVariables();
     this.shortifyService = new SMSShortify({
       text: this.text,
@@ -154,7 +157,8 @@ var SMS = class {
         text: this.text
       },
       channel: this.channel,
-      recipient: this.recipient
+      recipient: this.recipient,
+      scheduledTo: this.scheduledTo
     };
   }
   shortify(char = 160) {
@@ -207,18 +211,20 @@ var SMS = class {
 
 // lib/domain/entities/message/whatsapp.ts
 var Whatsapp = class {
-  constructor({ message, recipient, externalId }) {
+  constructor({ message, recipient, externalId, scheduledTo }) {
     this.channel = "whatsapp";
     this.externalId = externalId;
     this.message = message;
     this.recipient = recipient;
+    this.scheduledTo = scheduledTo?.toISOString();
   }
   getMessage() {
     return {
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
-      message: this.message
+      message: this.message,
+      scheduledTo: this.scheduledTo
     };
   }
 };
@@ -233,11 +239,11 @@ var COMInternal = class {
   }
   async error(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    return await sender.dispatch(data, this.ERROR_QUEUE);
+    return await sender.dispatch({ ...data, sentAt: data.sentAt?.toISOString() }, this.ERROR_QUEUE);
   }
   async success(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString);
-    return await sender.dispatch(data, this.SUCCESS_QUEUE);
+    return await sender.dispatch({ ...data, sentAt: data.sentAt.toISOString() }, this.SUCCESS_QUEUE);
   }
 };
 export {
