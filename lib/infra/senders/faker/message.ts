@@ -1,14 +1,15 @@
 
+import { DispatchOptions } from '../../../domain/protocols/dispatch-options'
 import { MessageDispatcher } from '../../../domain/protocols/message-dispatcher'
 
 export class FakerMessageSender implements MessageDispatcher {
   public static canHandle = 'faker'
-  public static sender: unknown[] = []
+  public static sender: { message: unknown, options?: DispatchOptions }[] = []
 
-  async dispatch(message: unknown, topic: string): Promise<void> {
+  async dispatch(message: unknown, topic: string, options?: DispatchOptions): Promise<void> {
     // eslint-disable-next-line no-console
     console.log('sending message to topic ' + topic)
-    FakerMessageSender.sender.push(message)
+    FakerMessageSender.sender.push({ message, options })
   }
 
   public static get messages() {

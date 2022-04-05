@@ -53,7 +53,7 @@ tap.test('should send can retry flag', async (t) => {
   await client.error(message)
 
   t.equal(FakerMessageSender.messages.length, 1)
-  t.equal((FakerMessageSender.messages[0] as { retrievable: boolean }).retrievable, true)
+  t.equal((FakerMessageSender.messages[0].message as { retrievable: boolean }).retrievable, true)
   t.end()
 })
 
@@ -72,6 +72,6 @@ tap.test('should can retry flag be falsy when not passed', async (t) => {
   await client.error(message)
 
   t.equal(FakerMessageSender.messages.length, 1)
-  t.equal(!!(FakerMessageSender.messages[0] as { retrievable: boolean }).retrievable, false)
+  t.equal(!!(FakerMessageSender.messages[0].message as { retrievable: boolean }).retrievable, false)
   t.end()
 })
