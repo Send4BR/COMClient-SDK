@@ -9,28 +9,31 @@ type RecipientType = {
 }
 
 type WhatsappData = {
-  message: any
+  message: unknown
   recipient: RecipientType
 } & MessageData
 
 export class Whatsapp implements Message {
   readonly channel: string = 'whatsapp'
   readonly externalId?: string
-  readonly message: any
+  readonly message: unknown
+  readonly scheduledTo?: string
   readonly recipient: RecipientType
 
-  constructor({ message, recipient, externalId }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId'>) {
+  constructor({ message, recipient, externalId, scheduledTo }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>) {
     this.externalId = externalId
     this.message = message
     this.recipient = recipient
+    this.scheduledTo = scheduledTo?.toISOString()
   }
 
-  getMessage(): WhatsappData {
+  getMessage() {
     return {
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
-      message: this.message
+      message: this.message,
+      scheduledTo: this.scheduledTo
     }
   }
 }

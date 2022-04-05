@@ -6,12 +6,14 @@ type Params = {
   connectionString: string;
 };
 
-type MessageData = {
+export type MessageData = {
   id: string,
   error?: string,
-  sentAt?: number,
+  sentAt?: Date,
   retrievable?: boolean
 }
+
+type Success = Omit<MessageData, 'sentAt'> & {sentAt: Date}
 
 export class COMInternal {
   private readonly provider: string
@@ -29,12 +31,12 @@ export class COMInternal {
   public async error(data: MessageData) {
     const sender = SenderFactory.create(this.provider, this.connectionString)
 
-    return await sender.dispatch(data, this.ERROR_QUEUE)
+    return await sender.dispatch({ ...data, sentAt: data.sentAt?.toISOString() }, this.ERROR_QUEUE)
   }
 
-  public async success(data: MessageData) {
+  public async success(data: Success) {
     const sender = SenderFactory.create(this.provider, this.connectionString)
 
-    return await sender.dispatch(data, this.SUCCESS_QUEUE)
+    return await sender.dispatch({ ...data, sentAt: data.sentAt.toISOString() }, this.SUCCESS_QUEUE)
   }
 }

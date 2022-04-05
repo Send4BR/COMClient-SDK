@@ -1,9 +1,10 @@
 import tap from 'tap'
-import { COMInternal } from '../../../lib/application/service/internal-client'
+import { COMInternal, MessageData } from '../../../lib/application/service/internal-client'
 import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
 
 tap.test('should send a success message', async (t) => {
   t.before(() => FakerMessageSender.cleanMessages())
+  const date = new Date()
   const client = new COMInternal({
     provider: 'faker',
     connectionString: 'faker_secret'
@@ -11,11 +12,14 @@ tap.test('should send a success message', async (t) => {
 
   const message = {
     id: '2323232',
-    sentAt: 1647261032
+    sentAt: date
   }
 
   await client.success(message)
+
   t.equal(FakerMessageSender.messages.length, 1)
+  t.equal((FakerMessageSender.messages[0].message as MessageData).sentAt, date.toISOString())
+
   t.end()
 })
 
