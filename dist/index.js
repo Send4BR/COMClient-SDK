@@ -64,7 +64,7 @@ var FakerMessageSender = _FakerMessageSender;
 FakerMessageSender.canHandle = "faker";
 FakerMessageSender.sender = [];
 
-// lib/utils/logs/logger.ts
+// lib/utils/logger/logger.ts
 var import_pino = __toESM(require("pino"));
 var Logger = class {
   constructor(silent = false) {

@@ -1,6 +1,6 @@
 import { ServiceBusClient } from '@azure/service-bus'
 import { MessageDispatcher } from '../../../domain/protocols/message-dispatcher'
-import { Logger } from '../../../utils/logs/logger'
+import { Logger } from '../../../utils/logger/logger'
 import { SenderOptions } from '../types/sender-options'
 
 export class MessageServiceBusSender implements MessageDispatcher {
