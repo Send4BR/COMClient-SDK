@@ -25,20 +25,41 @@ var FakerMessageSender = _FakerMessageSender;
 FakerMessageSender.canHandle = "faker";
 FakerMessageSender.sender = [];
 
+// lib/utils/logger/logger.ts
+import pino from "pino";
+var Logger = class {
+  constructor(silent = false) {
+    this.silent = silent;
+    this.logger = pino();
+  }
+  info(message) {
+    if (this.silent)
+      return;
+    this.logger.info(message);
+  }
+  error(message) {
+    if (this.silent)
+      return;
+    this.logger.error(message);
+  }
+};
+
 // lib/infra/senders/service-bus/message.ts
 var MessageServiceBusSender = class {
-  constructor(client) {
+  constructor(client, options) {
     this.client = client;
+    this.logger = new Logger(options?.silent);
   }
   async dispatch(message, topic) {
     const sender = this.client.createSender(topic);
     try {
+      this.logger.info(`sending message ${JSON.stringify(message)} on topic ${topic}`);
       await sender.sendMessages({
         body: message,
         contentType: "application/json"
       });
     } catch (err) {
-      console.error(err);
+      this.logger.error(JSON.stringify(err));
     } finally {
       await sender.close();
       await this.client.close();
@@ -49,11 +70,11 @@ MessageServiceBusSender.canHandle = "servicebus";
 
 // lib/infra/senders/sender-factory.ts
 var _SenderFactory = class {
-  static create(provider, connectionString) {
+  static create(provider, connectionString, options) {
     const Sender = _SenderFactory.senders.find((sender) => sender.canHandle === provider);
     switch (Sender) {
       case MessageServiceBusSender:
-        return new Sender(new ServiceBusClient(connectionString));
+        return new Sender(new ServiceBusClient(connectionString), options);
       case FakerMessageSender:
         return new Sender();
     }
@@ -65,15 +86,16 @@ SenderFactory.senders = [MessageServiceBusSender, FakerMessageSender];
 
 // lib/application/service/client.ts
 var COMClient = class {
-  constructor({ environment = "production", provider = "servicebus", connectionString, origin, clientId }) {
+  constructor({ environment = "production", provider = "servicebus", connectionString, origin, clientId, options }) {
     this.provider = provider;
+    this.senderOptions = options;
     this.origin = origin;
     this.clientId = clientId;
     this.connectionString = connectionString;
     this.MESSAGE_QUEUE = `${environment}--send-message`;
   }
   async dispatch(message) {
-    const sender = SenderFactory.create(this.provider, this.connectionString);
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
     await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
   }
 };
@@ -231,19 +253,30 @@ var Whatsapp = class {
 
 // lib/application/service/internal-client.ts
 var COMInternal = class {
-  constructor({ environment = "production", provider = "servicebus", connectionString }) {
+  constructor({ environment = "production", provider = "servicebus", connectionString, options }) {
     this.provider = provider;
+    this.senderOptions = options;
     this.connectionString = connectionString;
     this.ERROR_QUEUE = `${environment}--message-fail`;
     this.SUCCESS_QUEUE = `${environment}--message-success`;
+    this.TEMPLATE_CREATED_QUEUE = `${environment}--template-created`;
+    this.TEMPLATE_UPDATED_QUEUE = `${environment}--template-updated`;
   }
   async error(data) {
-    const sender = SenderFactory.create(this.provider, this.connectionString);
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
     return await sender.dispatch({ ...data, sentAt: data.sentAt?.toISOString() }, this.ERROR_QUEUE);
   }
   async success(data) {
-    const sender = SenderFactory.create(this.provider, this.connectionString);
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
     return await sender.dispatch({ ...data, sentAt: data.sentAt.toISOString() }, this.SUCCESS_QUEUE);
+  }
+  async templateCreated(data) {
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
+    return await sender.dispatch({ ...data }, this.TEMPLATE_CREATED_QUEUE);
+  }
+  async templateUpdated(data) {
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
+    return await sender.dispatch({ ...data }, this.TEMPLATE_UPDATED_QUEUE);
   }
 };
 export {

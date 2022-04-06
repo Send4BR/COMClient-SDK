@@ -2,12 +2,14 @@ declare module '@aftersale/comclient-sdk/lib/application/service/client' {
   import { Email } from '@aftersale/comclient-sdk/lib/domain/entities/message/email';
   import { SMS } from '@aftersale/comclient-sdk/lib/domain/entities/message/sms';
   import { Whatsapp } from '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp';
+  import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   type ClientParams = {
       environment?: string;
       provider?: string;
       connectionString: string;
       origin: string;
       clientId: string;
+      options?: SenderOptions;
   };
   export class COMClient {
       private readonly provider;
@@ -15,17 +17,20 @@ declare module '@aftersale/comclient-sdk/lib/application/service/client' {
       private readonly clientId;
       private readonly MESSAGE_QUEUE;
       private readonly connectionString;
-      constructor({ environment, provider, connectionString, origin, clientId }: ClientParams);
+      private senderOptions?;
+      constructor({ environment, provider, connectionString, origin, clientId, options }: ClientParams);
       dispatch(message: Email | SMS | Whatsapp): Promise<void>;
   }
   export {};
 
 }
 declare module '@aftersale/comclient-sdk/lib/application/service/internal-client' {
+  import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   type Params = {
       environment?: string;
       provider?: string;
       connectionString: string;
+      options?: SenderOptions;
   };
   export type MessageData = {
       id: string;
@@ -36,14 +41,26 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
   type Success = Omit<MessageData, 'sentAt'> & {
       sentAt: Date;
   };
+  export type TemplateCreated = {
+      id: string;
+  };
+  export type TemplateUpdated = {
+      id: string;
+      status: 'approved' | 'negated';
+  };
   export class COMInternal {
+      private senderOptions?;
       private readonly provider;
       private readonly ERROR_QUEUE;
       private readonly SUCCESS_QUEUE;
+      private readonly TEMPLATE_CREATED_QUEUE;
+      private readonly TEMPLATE_UPDATED_QUEUE;
       private readonly connectionString;
-      constructor({ environment, provider, connectionString }: Params);
+      constructor({ environment, provider, connectionString, options }: Params);
       error(data: MessageData): Promise<void>;
       success(data: Success): Promise<void>;
+      templateCreated(data: TemplateCreated): Promise<void>;
+      templateUpdated(data: TemplateUpdated): Promise<void>;
   }
   export {};
 
@@ -234,20 +251,40 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/faker/message' {
 declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { FakerMessageSender } from '@aftersale/comclient-sdk/lib/infra/senders/faker/message';
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
+  import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   export default class SenderFactory {
       static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
-      static create(provider: string, connectionString: string): MessageServiceBusSender | FakerMessageSender;
+      static create(provider: string, connectionString: string, options?: SenderOptions): MessageServiceBusSender | FakerMessageSender;
   }
 
 }
 declare module '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message' {
   import { ServiceBusClient } from '@azure/service-bus';
   import { MessageDispatcher } from '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher';
+  import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   export class MessageServiceBusSender implements MessageDispatcher {
       private client;
       static canHandle: string;
-      constructor(client: ServiceBusClient);
+      private logger;
+      constructor(client: ServiceBusClient, options?: SenderOptions);
       dispatch(message: unknown, topic: string): Promise<void>;
+  }
+
+}
+declare module '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options' {
+  export type SenderOptions = {
+      silent?: boolean;
+  };
+
+}
+declare module '@aftersale/comclient-sdk/lib/utils/logger/logger' {
+  import { Logger as PinoLogger } from 'pino';
+  export class Logger {
+      private silent;
+      logger: PinoLogger;
+      constructor(silent?: boolean);
+      info(message: string): void;
+      error(message: string): void;
   }
 
 }
