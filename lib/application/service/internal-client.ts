@@ -23,7 +23,7 @@ export type TemplateCreated = {
 
 export type TemplateUpdated = {
   id: string,
-  status: 'approved' | 'negated',
+  status: 'approved' | 'negated' | 'pending',
 }
 
 export class COMInternal {

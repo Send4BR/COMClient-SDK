@@ -46,7 +46,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
   };
   export type TemplateUpdated = {
       id: string;
-      status: 'approved' | 'negated';
+      status: 'approved' | 'negated' | 'pending';
   };
   export class COMInternal {
       private senderOptions?;
