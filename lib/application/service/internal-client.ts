@@ -18,7 +18,8 @@ export type MessageData = {
 type Success = Omit<MessageData, 'sentAt'> & {sentAt: Date}
 
 export type TemplateCreated = {
-  id: string
+  id: string,
+  providerId: string
 }
 
 export type TemplateUpdated = {
