@@ -88,7 +88,8 @@ tap.test('should send a template created', async (t) => {
   })
 
   const message = {
-    id: '2323232'
+    id: '2323232',
+    providerId: '123'
   }
 
   await client.templateCreated(message)

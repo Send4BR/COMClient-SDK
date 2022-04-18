@@ -43,6 +43,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
   };
   export type TemplateCreated = {
       id: string;
+      providerId: string;
   };
   export type TemplateUpdated = {
       id: string;
@@ -253,8 +254,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   export default class SenderFactory {
-      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
-      static create(provider: string, connectionString: string, options?: SenderOptions): MessageServiceBusSender | FakerMessageSender;
+      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
+      static create(provider: string, connectionString: string, options?: SenderOptions): FakerMessageSender | MessageServiceBusSender;
   }
 
 }
