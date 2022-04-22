@@ -270,5 +270,18 @@ tap.test('SMS shortify', (t) => {
     t.equal(message.text.length <= 240, true)
     t.end()
   })
+
+  t.test('should get error when link is not provided but found in message text', (t) => {
+    t.throws(() => new SMS(
+      {
+        message: {
+          text: mockMessage.long
+        },
+        recipient
+      }
+    ))
+    t.end()
+  })
+
   t.end()
 })

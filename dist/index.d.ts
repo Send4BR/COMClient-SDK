@@ -44,6 +44,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
   export type TemplateCreated = {
       id: string;
       providerId: string;
+      namespace?: string;
   };
   export type TemplateUpdated = {
       id: string;
@@ -157,6 +158,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       private get variables();
       private replaceVariables;
       private normalize;
+      private verify;
   }
   export {};
 
@@ -186,6 +188,12 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       };
   }
   export {};
+
+}
+declare module '@aftersale/comclient-sdk/lib/domain/errors/link-not-provided' {
+  export class LinkNotProvidedError extends Error {
+      constructor();
+  }
 
 }
 declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher' {
@@ -254,8 +262,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   export default class SenderFactory {
-      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
-      static create(provider: string, connectionString: string, options?: SenderOptions): FakerMessageSender | MessageServiceBusSender;
+      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
+      static create(provider: string, connectionString: string, options?: SenderOptions): MessageServiceBusSender | FakerMessageSender;
   }
 
 }
