@@ -1,7 +1,7 @@
 import { Message, MessageData } from './message'
 import { normalizeDiacritics } from 'normalize-text'
 import { SMSShortify } from '../../service/smsshortify'
-import { LinkNotProvidedError } from '../../errors/link-not-provided';
+import { LinkNotProvidedError } from '../../errors/link-not-provided'
 
 type MessageType = {
   prefix?: string;
