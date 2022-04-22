@@ -1,6 +1,7 @@
 import { Message, MessageData } from './message'
 import { normalizeDiacritics } from 'normalize-text'
 import { SMSShortify } from '../../service/smsshortify'
+import { LinkNotProvidedError } from '../../errors/link-not-provided';
 
 type MessageType = {
   prefix?: string;
@@ -38,6 +39,7 @@ export class SMS implements Message {
       suffix: this.suffix,
       link: this.variables?.link
     })
+    this.verify()
   }
 
   public getMessage() {
@@ -109,5 +111,9 @@ export class SMS implements Message {
       prefix: message.prefix ? normalizeDiacritics(message.prefix) : undefined,
       variables: message.variables
     }
+  }
+
+  private verify() {
+    if (this.message.text.includes('$link') && !this.message.variables?.link) throw new LinkNotProvidedError()
   }
 }

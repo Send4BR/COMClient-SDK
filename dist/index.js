@@ -194,6 +194,13 @@ var SMSShortify = class {
   }
 };
 
+// lib/domain/errors/link-not-provided.ts
+var LinkNotProvidedError = class extends Error {
+  constructor() {
+    super("Error: Found link but variable not provided");
+  }
+};
+
 // lib/domain/entities/message/sms.ts
 var SMS = class {
   constructor({ message, recipient, externalId, scheduledTo }) {
@@ -209,6 +216,7 @@ var SMS = class {
       suffix: this.suffix,
       link: this.variables?.link
     });
+    this.verify();
   }
   getMessage() {
     this.format();
@@ -267,6 +275,10 @@ var SMS = class {
       prefix: message.prefix ? (0, import_normalize_text.normalizeDiacritics)(message.prefix) : void 0,
       variables: message.variables
     };
+  }
+  verify() {
+    if (this.message.text.includes("$link") && !this.message.variables?.link)
+      throw new LinkNotProvidedError();
   }
 };
 

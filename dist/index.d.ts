@@ -157,6 +157,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       private get variables();
       private replaceVariables;
       private normalize;
+      private verify;
   }
   export {};
 
@@ -186,6 +187,12 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       };
   }
   export {};
+
+}
+declare module '@aftersale/comclient-sdk/lib/domain/errors/link-not-provided' {
+  export class LinkNotProvidedError extends Error {
+      constructor();
+  }
 
 }
 declare module '@aftersale/comclient-sdk/lib/domain/protocols/message-dispatcher' {
