@@ -344,8 +344,8 @@ declare module '@aftersale/comclient-sdk/test/fixtures/email' {
 }
 declare module '@aftersale/comclient-sdk/test/fixtures/whatsapp' {
   import { WhatsappData } from '@aftersale/comclient-sdk/lib/index';
-  export const whatsappTextTest: WhatsappData;
-  export const whatsappTemplateTest: WhatsappData;
+  export const whatsappTextTest: Partial<WhatsappData>;
+  export const whatsappTemplateTest: Partial<WhatsappData>;
 
 }
 declare module '@aftersale/comclient-sdk' {

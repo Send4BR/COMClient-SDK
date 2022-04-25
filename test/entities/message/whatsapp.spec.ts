@@ -1,10 +1,10 @@
 import tap from 'tap'
-import { Whatsapp } from '../../../lib'
+import { Whatsapp, WhatsappData } from '../../../lib'
 import { whatsappTextTest } from '../../fixtures/whatsapp'
 
 tap.test('should have need props', (t) => {
   const date = new Date()
-  const message = new Whatsapp({ ...whatsappTextTest, scheduledTo: date })
+  const message = new Whatsapp({ ...whatsappTextTest as WhatsappData, scheduledTo: date })
 
   t.equal(message.channel, 'whatsapp')
   t.equal(message.message, whatsappTextTest.message)

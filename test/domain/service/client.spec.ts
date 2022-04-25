@@ -1,5 +1,5 @@
 import tap from 'tap'
-import { COMClient, Email, MessageData, Whatsapp } from '../../../lib'
+import { COMClient, Email, MessageData, Whatsapp, WhatsappData } from '../../../lib'
 import { SMS } from '../../../lib/domain/entities/message/sms'
 import { ProviderNotImplemented } from '../../../lib/errors/provider-not-implemented'
 import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
@@ -125,7 +125,7 @@ tap.test('should send a whatsapp text message using fake provider', async (t) =>
     origin: 'pc da nasa'
   })
 
-  const message = new Whatsapp(whatsappTextTest)
+  const message = new Whatsapp(whatsappTextTest as WhatsappData)
 
   await client.dispatch(message)
   t.equal(FakerMessageSender.messages.length, 1)
@@ -142,7 +142,7 @@ tap.test('should send a whatsapp template message using fake provider', async (t
     origin: 'pc da nasa'
   })
 
-  const message = new Whatsapp(whatsappTemplateTest)
+  const message = new Whatsapp(whatsappTemplateTest as WhatsappData)
 
   await client.dispatch(message)
   t.equal(FakerMessageSender.messages.length, 1)
