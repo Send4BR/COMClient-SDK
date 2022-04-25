@@ -165,17 +165,27 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
 }
 declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
   import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
+  type Text = {
+      type: 'text';
+      text: string;
+  };
+  type Template = {
+      type: 'template';
+      template: string;
+      fields: Record<string, string>;
+  };
+  type MessageType = Template | Text;
   type RecipientType = {
       phone: string;
   };
-  type WhatsappData = {
-      message: unknown;
+  export type WhatsappData = {
+      message: MessageType;
       recipient: RecipientType;
   } & MessageData;
   export class Whatsapp implements Message {
       readonly channel: string;
       readonly externalId?: string;
-      readonly message: unknown;
+      readonly message: MessageType;
       readonly scheduledTo?: string;
       readonly recipient: RecipientType;
       constructor({ message, recipient, externalId, scheduledTo }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
@@ -183,7 +193,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
           channel: string;
           externalId: string | undefined;
           recipient: RecipientType;
-          message: unknown;
+          message: MessageType;
           scheduledTo: string | undefined;
       };
   }
@@ -262,8 +272,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   export default class SenderFactory {
-      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
-      static create(provider: string, connectionString: string, options?: SenderOptions): MessageServiceBusSender | FakerMessageSender;
+      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
+      static create(provider: string, connectionString: string, options?: SenderOptions): FakerMessageSender | MessageServiceBusSender;
   }
 
 }
@@ -313,6 +323,10 @@ declare module '@aftersale/comclient-sdk/test/entities/message/sms.spec' {
   export {};
 
 }
+declare module '@aftersale/comclient-sdk/test/entities/message/whatsapp.spec' {
+  export {};
+
+}
 declare module '@aftersale/comclient-sdk/test/fixtures/email' {
   const _default: {
       message: {
@@ -326,6 +340,12 @@ declare module '@aftersale/comclient-sdk/test/fixtures/email' {
       externalId: string;
   };
   export default _default;
+
+}
+declare module '@aftersale/comclient-sdk/test/fixtures/whatsapp' {
+  import { WhatsappData } from '@aftersale/comclient-sdk/lib/index';
+  export const whatsappTextTest: WhatsappData;
+  export const whatsappTemplateTest: WhatsappData;
 
 }
 declare module '@aftersale/comclient-sdk' {
