@@ -245,7 +245,12 @@ var SMS = class {
 
 // lib/domain/entities/message/whatsapp.ts
 var Whatsapp = class {
-  constructor({ message, recipient, externalId, scheduledTo }) {
+  constructor({
+    message,
+    recipient,
+    externalId,
+    scheduledTo
+  }) {
     this.channel = "whatsapp";
     this.externalId = externalId;
     this.message = message;
