@@ -9,24 +9,24 @@ type Params = {
 };
 
 export type MessageData = {
-  id: string,
-  error?: string,
-  sentAt?: Date,
-  retrievable?: boolean
-}
+  id: string;
+  error?: string;
+  sentAt?: Date;
+  retrievable?: boolean;
+};
 
-type Success = Omit<MessageData, 'sentAt'> & {sentAt: Date}
+type Success = Omit<MessageData, 'sentAt'> & { sentAt: Date };
 
 export type TemplateCreated = {
-  id: string,
-  providerId: string
-  namespace?: string
-}
+  id: string;
+  providerId: string;
+  namespace?: string;
+};
 
 export type TemplateUpdated = {
-  id: string,
-  status: 'approved' | 'negated',
-}
+  id: string;
+  status: 'approved' | 'submitted' | 'negated';
+};
 
 export class COMInternal {
   private senderOptions?: SenderOptions
