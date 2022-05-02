@@ -45,7 +45,7 @@ export class COMInternal {
     this.ERROR_QUEUE = `${environment}--message-fail`
     this.SUCCESS_QUEUE = `${environment}--message-success`
     this.TEMPLATE_CREATED_QUEUE = `${environment}--template-created`
-    this.TEMPLATE_UPDATED_QUEUE = `${environment}--template-updated`
+    this.TEMPLATE_UPDATED_QUEUE = `${environment}--template-status`
   }
 
   public async error(data: MessageData) {
