@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@azure/service-bus": "^7.5.0",
-    "normalize-text": "^2.4.0"
+    "normalize-text": "^2.4.0",
+    "pino": "^7.9.2"
   }
 }
