@@ -55,8 +55,8 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       message: string;
       from: string;
       name: string;
-      comUuid: string;
-      ecommUuid: string;
+      comUuid?: string;
+      ecommUuid?: string;
       sentAt: Date;
   };
   export class COMInternal {
