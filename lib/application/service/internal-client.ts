@@ -28,6 +28,16 @@ export type TemplateUpdated = {
   status: 'approved' | 'submitted' | 'negated';
 };
 
+export type UserInteraction = {
+  providerId: string
+  message: string
+  from: string
+  name: string
+  comUuid: string,
+  ecommUuid: string,
+  sentAt: Date
+}
+
 export class COMInternal {
   private senderOptions?: SenderOptions
   private readonly provider: string
@@ -35,6 +45,7 @@ export class COMInternal {
   private readonly SUCCESS_QUEUE: string
   private readonly TEMPLATE_CREATED_QUEUE: string
   private readonly TEMPLATE_UPDATED_QUEUE: string
+  private readonly USER_INTERACTION_TOPIC: string
 
   private readonly connectionString: string
 
@@ -46,6 +57,7 @@ export class COMInternal {
     this.SUCCESS_QUEUE = `${environment}--message-success`
     this.TEMPLATE_CREATED_QUEUE = `${environment}--template-created`
     this.TEMPLATE_UPDATED_QUEUE = `${environment}--template-status`
+    this.USER_INTERACTION_TOPIC = `${environment}--user-interaction`
   }
 
   public async error(data: MessageData) {
@@ -70,5 +82,11 @@ export class COMInternal {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions)
 
     return await sender.dispatch({ ...data }, this.TEMPLATE_UPDATED_QUEUE)
+  }
+
+  public async interaction(data: UserInteraction) {
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions)
+
+    return await sender.dispatch({ ...data, sentAt: data.sentAt.toISOString() }, this.USER_INTERACTION_TOPIC)
   }
 }

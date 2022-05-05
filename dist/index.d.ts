@@ -50,6 +50,15 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       id: string;
       status: 'approved' | 'submitted' | 'negated';
   };
+  export type UserInteraction = {
+      providerId: string;
+      message: string;
+      from: string;
+      name: string;
+      comUuid: string;
+      ecommUuid: string;
+      sentAt: Date;
+  };
   export class COMInternal {
       private senderOptions?;
       private readonly provider;
@@ -57,12 +66,14 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       private readonly SUCCESS_QUEUE;
       private readonly TEMPLATE_CREATED_QUEUE;
       private readonly TEMPLATE_UPDATED_QUEUE;
+      private readonly USER_INTERACTION_TOPIC;
       private readonly connectionString;
       constructor({ environment, provider, connectionString, options }: Params);
       error(data: MessageData): Promise<void>;
       success(data: Success): Promise<void>;
       templateCreated(data: TemplateCreated): Promise<void>;
       templateUpdated(data: TemplateUpdated): Promise<void>;
+      interaction(data: UserInteraction): Promise<void>;
   }
   export {};
 
