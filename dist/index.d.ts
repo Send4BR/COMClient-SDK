@@ -66,7 +66,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       private readonly SUCCESS_QUEUE;
       private readonly TEMPLATE_CREATED_QUEUE;
       private readonly TEMPLATE_UPDATED_QUEUE;
-      private readonly USER_INTERACTION_TOPIC;
+      private readonly USER_INTERACTION_QUEUE;
       private readonly connectionString;
       constructor({ environment, provider, connectionString, options }: Params);
       error(data: MessageData): Promise<void>;
