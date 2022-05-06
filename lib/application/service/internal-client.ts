@@ -33,8 +33,7 @@ export type UserInteraction = {
   message: string
   from: string
   name: string
-  comUuid?: string,
-  ecommUuid?: string,
+  comUuid: string,
   sentAt: Date
 }
 

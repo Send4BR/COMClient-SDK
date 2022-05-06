@@ -3,7 +3,8 @@ import {
   COMInternal,
   MessageData,
   TemplateCreated,
-  TemplateUpdated
+  TemplateUpdated,
+  UserInteraction
 } from '../../../lib/application/service/internal-client'
 import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
 
@@ -139,6 +140,35 @@ tap.test('should send a template updated with submitted status', async (t) => {
   t.equal(FakerMessageSender.messages.length, 1)
   t.equal((FakerMessageSender.messages[0] as TemplateUpdated).id, '2323232')
   t.equal((FakerMessageSender.messages[0] as TemplateUpdated).status, 'submitted')
+
+  t.end()
+})
+
+tap.test('should send a user interaction', async (t) => {
+  t.before(() => FakerMessageSender.cleanMessages())
+  const client = new COMInternal({
+    provider: 'faker',
+    connectionString: 'faker_secret'
+  })
+
+  const date = new Date()
+
+  await client.interaction({
+    providerId: 'any_id',
+    message: 'some message',
+    from: 'user_telephone',
+    name: 'Batman',
+    comUuid: 'any_com_id',
+    sentAt: date
+  })
+
+  t.equal(FakerMessageSender.messages.length, 1)
+  t.equal((FakerMessageSender.messages[0] as UserInteraction).providerId, 'any_id')
+  t.equal((FakerMessageSender.messages[0] as UserInteraction).message, 'some message')
+  t.equal((FakerMessageSender.messages[0] as UserInteraction).from, 'user_telephone')
+  t.equal((FakerMessageSender.messages[0] as UserInteraction).name, 'Batman')
+  t.equal((FakerMessageSender.messages[0] as UserInteraction).message, 'some message')
+  t.equal((FakerMessageSender.messages[0] as UserInteraction).sentAt, date.toISOString())
 
   t.end()
 })
