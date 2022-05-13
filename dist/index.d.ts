@@ -50,6 +50,15 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       id: string;
       status: 'approved' | 'submitted' | 'negated';
   };
+  export type MessageReceived = {
+      from: string;
+      id: string;
+      text: {
+          body: string;
+      };
+      timestamp: string;
+      clientId: string;
+  };
   export class COMInternal {
       private senderOptions?;
       private readonly provider;
@@ -57,12 +66,14 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
       private readonly SUCCESS_QUEUE;
       private readonly TEMPLATE_CREATED_QUEUE;
       private readonly TEMPLATE_UPDATED_QUEUE;
+      private readonly MESSAGE_RECEIVED;
       private readonly connectionString;
       constructor({ environment, provider, connectionString, options }: Params);
       error(data: MessageData): Promise<void>;
       success(data: Success): Promise<void>;
       templateCreated(data: TemplateCreated): Promise<void>;
       templateUpdated(data: TemplateUpdated): Promise<void>;
+      messageReceived(data: MessageReceived): Promise<void>;
   }
   export {};
 

@@ -278,6 +278,7 @@ var COMInternal = class {
     this.SUCCESS_QUEUE = `${environment}--message-success`;
     this.TEMPLATE_CREATED_QUEUE = `${environment}--template-created`;
     this.TEMPLATE_UPDATED_QUEUE = `${environment}--template-status`;
+    this.MESSAGE_RECEIVED = `${environment}--receive-message`;
   }
   async error(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
@@ -294,6 +295,10 @@ var COMInternal = class {
   async templateUpdated(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
     return await sender.dispatch({ ...data }, this.TEMPLATE_UPDATED_QUEUE);
+  }
+  async messageReceived(data) {
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
+    return await sender.dispatch({ ...data }, this.MESSAGE_RECEIVED);
   }
 };
 export {

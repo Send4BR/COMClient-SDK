@@ -2,6 +2,7 @@ import tap from 'tap'
 import {
   COMInternal,
   MessageData,
+  MessageReceived,
   TemplateCreated,
   TemplateUpdated
 } from '../../../lib/application/service/internal-client'
@@ -139,6 +140,30 @@ tap.test('should send a template updated with submitted status', async (t) => {
   t.equal(FakerMessageSender.messages.length, 1)
   t.equal((FakerMessageSender.messages[0] as TemplateUpdated).id, '2323232')
   t.equal((FakerMessageSender.messages[0] as TemplateUpdated).status, 'submitted')
+
+  t.end()
+})
+
+tap.test('should send a received message event', async (t) => {
+  t.before(() => FakerMessageSender.cleanMessages())
+  const client = new COMInternal({
+    provider: 'faker',
+    connectionString: 'faker_secret'
+  })
+  const message = {
+    id: '2323232',
+    clientId: '123',
+    from: '999999999',
+    text: {
+      body: 'hello test'
+    },
+    timestamp: '2020-10-10T09:00:00'
+  }
+
+  await client.messageReceived(message)
+
+  t.equal(FakerMessageSender.messages.length, 1)
+  t.same((FakerMessageSender.messages[0] as MessageReceived), message)
 
   t.end()
 })
