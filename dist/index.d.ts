@@ -73,6 +73,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
       from: string;
       subject: string;
       body: string;
+      cc?: string[];
   };
   type RecipientType = {
       email: string;

@@ -4,7 +4,7 @@ type MessageType = {
   from: string,
   subject: string,
   body: string,
-  cc: string
+  cc?: string[]
 };
 
 type RecipientType = {
