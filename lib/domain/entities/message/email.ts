@@ -3,7 +3,8 @@ import { Message, MessageData } from './message'
 type MessageType = {
   from: string,
   subject: string,
-  body: string
+  body: string,
+  cc?: string[]
 };
 
 type RecipientType = {
