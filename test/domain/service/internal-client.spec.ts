@@ -154,9 +154,7 @@ tap.test('should send a received message event', async (t) => {
     id: '2323232',
     clientId: '123',
     from: '999999999',
-    text: {
-      body: 'hello test'
-    },
+    text: 'hello test',
     timestamp: '2020-10-10T09:00:00'
   }
 

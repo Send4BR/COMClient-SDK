@@ -52,12 +52,9 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
   };
   export type MessageReceived = {
       from: string;
-      id: string;
-      text: {
-          body: string;
-      };
+      text: string;
       timestamp: string;
-      clientId: string;
+      clientId?: string;
   };
   export class COMInternal {
       private senderOptions?;
