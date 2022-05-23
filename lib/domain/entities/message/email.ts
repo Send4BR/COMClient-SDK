@@ -21,12 +21,14 @@ export class Email implements Message {
   readonly message: MessageType
   readonly recipient: RecipientType
   readonly scheduledTo?: string
+  readonly replyingTo?: string
 
-  constructor({ message, recipient, externalId, scheduledTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>) {
+  constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
     this.externalId = externalId
     this.message = message
     this.recipient = recipient
     this.scheduledTo = scheduledTo?.toISOString()
+    this.replyingTo = replyingTo
   }
 
   getMessage() {
@@ -35,7 +37,8 @@ export class Email implements Message {
       externalId: this.externalId,
       recipient: this.recipient,
       message: this.message,
-      scheduledTo: this.scheduledTo
+      scheduledTo: this.scheduledTo,
+      replyingTo: this.replyingTo
     }
   }
 }

@@ -21,17 +21,20 @@ export class Whatsapp implements Message {
   readonly message: MessageType
   readonly scheduledTo?: string
   readonly recipient: RecipientType
+  readonly replyingTo?: string
 
   constructor({
     message,
     recipient,
     externalId,
-    scheduledTo
-  }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>) {
+    scheduledTo,
+    replyingTo
+  }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
     this.externalId = externalId
     this.message = message
     this.recipient = recipient
     this.scheduledTo = scheduledTo?.toISOString()
+    this.replyingTo = replyingTo
   }
 
   getMessage() {
@@ -40,7 +43,8 @@ export class Whatsapp implements Message {
       externalId: this.externalId,
       recipient: this.recipient,
       message: this.message,
-      scheduledTo: this.scheduledTo
+      scheduledTo: this.scheduledTo,
+      replyingTo: this.replyingTo
     }
   }
 }

@@ -10,7 +10,7 @@ type ClientParams = {
   connectionString: string;
   origin: string;
   clientId: string;
-  options?: SenderOptions;
+  options?: SenderOptions
 };
 
 export class COMClient {

@@ -4,7 +4,7 @@ import { SMS } from '../../../lib/domain/entities/message/sms'
 import { ProviderNotImplemented } from '../../../lib/errors/provider-not-implemented'
 import { FakerMessageSender } from '../../../lib/infra/senders/faker/message'
 import emailTest from '../../fixtures/email'
-import { whatsappTextTest, whatsappTemplateTest } from '../../fixtures/whatsapp'
+import { whatsappTemplateTest, whatsappTextTest } from '../../fixtures/whatsapp'
 
 type SMSData = Partial<Omit<MessageData, 'scheduledTo'>> & { scheduledTo?: string; message: { text: string } };
 
@@ -126,6 +126,23 @@ tap.test('should send a whatsapp text message using fake provider', async (t) =>
   })
 
   const message = new Whatsapp(whatsappTextTest as WhatsappData)
+
+  await client.dispatch(message)
+  t.equal(FakerMessageSender.messages.length, 1)
+  t.match(FakerMessageSender.messages[0], message.getMessage())
+  t.end()
+})
+
+tap.test('should send whatsapp message replying to other', async (t) => {
+  t.before(() => FakerMessageSender.cleanMessages())
+  const client = new COMClient({
+    provider: 'faker',
+    connectionString: 'faker_secret',
+    clientId: '4632b0b0-9be2-4797-92ad-7c53ff3c5662',
+    origin: 'pc da nasa'
+  })
+
+  const message = new Whatsapp({ ...whatsappTextTest, replyingTo: '1234' } as WhatsappData)
 
   await client.dispatch(message)
   t.equal(FakerMessageSender.messages.length, 1)

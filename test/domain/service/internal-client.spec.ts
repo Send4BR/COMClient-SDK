@@ -151,7 +151,6 @@ tap.test('should send a received message event', async (t) => {
     connectionString: 'faker_secret'
   })
   const message = {
-    id: '2323232',
     clientId: '123',
     from: '999999999',
     text: 'hello test',

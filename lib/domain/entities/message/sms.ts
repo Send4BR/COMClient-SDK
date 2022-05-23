@@ -1,7 +1,7 @@
-import { Message, MessageData } from './message'
 import { normalizeDiacritics } from 'normalize-text'
-import { SMSShortify } from '../../service/smsshortify'
 import { LinkNotProvidedError } from '../../errors/link-not-provided'
+import { SMSShortify } from '../../service/smsshortify'
+import { Message, MessageData } from './message'
 
 type MessageType = {
   prefix?: string;
@@ -26,12 +26,14 @@ export class SMS implements Message {
   private readonly recipient: RecipientType
   private readonly message: MessageType
   private readonly shortifyService: SMSShortify
+  readonly replyingTo?: string
 
-  constructor({ message, recipient, externalId, scheduledTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>) {
+  constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
     this.externalId = externalId
     this.message = this.normalize(message)
     this.recipient = recipient
     this.scheduledTo = scheduledTo?.toISOString()
+    this.replyingTo = replyingTo
     this.replaceVariables()
     this.shortifyService = new SMSShortify({
       text: this.text,
@@ -52,7 +54,8 @@ export class SMS implements Message {
       },
       channel: this.channel,
       recipient: this.recipient,
-      scheduledTo: this.scheduledTo
+      scheduledTo: this.scheduledTo,
+      replyingTo: this.replyingTo
     }
   }
 

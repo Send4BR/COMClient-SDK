@@ -14,3 +14,11 @@ tap.test('should have need props', (t) => {
 
   t.end()
 })
+
+tap.test('should have replying to props', (t) => {
+  const message = new Email({ ...emailTest, replyingTo: '1234' })
+
+  t.equal(message.replyingTo, '1234')
+
+  t.end()
+})

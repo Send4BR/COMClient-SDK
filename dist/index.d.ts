@@ -95,13 +95,15 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
       readonly message: MessageType;
       readonly recipient: RecipientType;
       readonly scheduledTo?: string;
-      constructor({ message, recipient, externalId, scheduledTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
+      readonly replyingTo?: string;
+      constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>);
       getMessage(): {
           channel: string;
           externalId: string | undefined;
           recipient: RecipientType;
           message: MessageType;
           scheduledTo: string | undefined;
+          replyingTo: string | undefined;
       };
   }
   export {};
@@ -112,9 +114,11 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/message' {
       externalId?: string;
       channel: string;
       scheduledTo?: Date;
+      replyingTo?: string;
   };
   export interface Message {
       externalId?: string;
+      replyingTo?: string;
       channel?: string;
       scheduledTo?: string;
       getMessage(): Partial<Omit<MessageData, 'scheduledTo'>> & {
@@ -145,7 +149,8 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       private readonly recipient;
       private readonly message;
       private readonly shortifyService;
-      constructor({ message, recipient, externalId, scheduledTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
+      readonly replyingTo?: string;
+      constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>);
       getMessage(): {
           externalId: string | undefined;
           message: {
@@ -154,6 +159,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
           channel: string;
           recipient: RecipientType;
           scheduledTo: string | undefined;
+          replyingTo: string | undefined;
       };
       shortify(char?: number): void;
       private format;
@@ -196,13 +202,15 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       readonly message: MessageType;
       readonly scheduledTo?: string;
       readonly recipient: RecipientType;
-      constructor({ message, recipient, externalId, scheduledTo }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo'>);
+      readonly replyingTo?: string;
+      constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>);
       getMessage(): {
           channel: string;
           externalId: string | undefined;
           recipient: RecipientType;
           message: MessageType;
           scheduledTo: string | undefined;
+          replyingTo: string | undefined;
       };
   }
   export {};
