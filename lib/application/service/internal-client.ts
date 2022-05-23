@@ -32,7 +32,8 @@ export type MessageReceived = {
   from: string,
   text: string,
   timestamp: string,
-  clientId?: string
+  clientId?: string,
+  profileName: string
 }
 
 export class COMInternal {
