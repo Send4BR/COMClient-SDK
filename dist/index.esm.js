@@ -102,12 +102,13 @@ var COMClient = class {
 
 // lib/domain/entities/message/email.ts
 var Email = class {
-  constructor({ message, recipient, externalId, scheduledTo }) {
+  constructor({ message, recipient, externalId, scheduledTo, replyingTo }) {
     this.channel = "email";
     this.externalId = externalId;
     this.message = message;
     this.recipient = recipient;
     this.scheduledTo = scheduledTo?.toISOString();
+    this.replyingTo = replyingTo;
   }
   getMessage() {
     return {
@@ -115,13 +116,21 @@ var Email = class {
       externalId: this.externalId,
       recipient: this.recipient,
       message: this.message,
-      scheduledTo: this.scheduledTo
+      scheduledTo: this.scheduledTo,
+      replyingTo: this.replyingTo
     };
   }
 };
 
 // lib/domain/entities/message/sms.ts
 import { normalizeDiacritics } from "normalize-text";
+
+// lib/domain/errors/link-not-provided.ts
+var LinkNotProvidedError = class extends Error {
+  constructor() {
+    super("Error: Found link but variable not provided");
+  }
+};
 
 // lib/domain/service/smsshortify.ts
 var SMSShortify = class {
@@ -155,21 +164,15 @@ var SMSShortify = class {
   }
 };
 
-// lib/domain/errors/link-not-provided.ts
-var LinkNotProvidedError = class extends Error {
-  constructor() {
-    super("Error: Found link but variable not provided");
-  }
-};
-
 // lib/domain/entities/message/sms.ts
 var SMS = class {
-  constructor({ message, recipient, externalId, scheduledTo }) {
+  constructor({ message, recipient, externalId, scheduledTo, replyingTo }) {
     this.channel = "sms";
     this.externalId = externalId;
     this.message = this.normalize(message);
     this.recipient = recipient;
     this.scheduledTo = scheduledTo?.toISOString();
+    this.replyingTo = replyingTo;
     this.replaceVariables();
     this.shortifyService = new SMSShortify({
       text: this.text,
@@ -188,7 +191,8 @@ var SMS = class {
       },
       channel: this.channel,
       recipient: this.recipient,
-      scheduledTo: this.scheduledTo
+      scheduledTo: this.scheduledTo,
+      replyingTo: this.replyingTo
     };
   }
   shortify(char = 160) {
@@ -249,13 +253,15 @@ var Whatsapp = class {
     message,
     recipient,
     externalId,
-    scheduledTo
+    scheduledTo,
+    replyingTo
   }) {
     this.channel = "whatsapp";
     this.externalId = externalId;
     this.message = message;
     this.recipient = recipient;
     this.scheduledTo = scheduledTo?.toISOString();
+    this.replyingTo = replyingTo;
   }
   getMessage() {
     return {
@@ -263,7 +269,8 @@ var Whatsapp = class {
       externalId: this.externalId,
       recipient: this.recipient,
       message: this.message,
-      scheduledTo: this.scheduledTo
+      scheduledTo: this.scheduledTo,
+      replyingTo: this.replyingTo
     };
   }
 };
@@ -278,6 +285,7 @@ var COMInternal = class {
     this.SUCCESS_QUEUE = `${environment}--message-success`;
     this.TEMPLATE_CREATED_QUEUE = `${environment}--template-created`;
     this.TEMPLATE_UPDATED_QUEUE = `${environment}--template-status`;
+    this.MESSAGE_RECEIVED = `${environment}--receive-message`;
   }
   async error(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
@@ -294,6 +302,10 @@ var COMInternal = class {
   async templateUpdated(data) {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
     return await sender.dispatch({ ...data }, this.TEMPLATE_UPDATED_QUEUE);
+  }
+  async messageReceived(data) {
+    const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
+    return await sender.dispatch({ ...data }, this.MESSAGE_RECEIVED);
   }
 };
 export {
