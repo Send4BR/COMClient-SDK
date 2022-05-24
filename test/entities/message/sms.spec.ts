@@ -25,6 +25,14 @@ tap.test('should have need props', (t) => {
   t.end()
 })
 
+tap.test('should have replying to props', (t) => {
+  const message = new SMS({ message: { text: 'test' }, recipient, replyingTo: '1234' })
+
+  t.equal(message.replyingTo, '1234')
+
+  t.end()
+})
+
 tap.test('should normalize diacritics in message', (t) => {
   const msg = new SMS({
     message: {

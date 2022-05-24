@@ -69,4 +69,40 @@ O email recebe um objeto de configurações com as seguintes propriedades:
 |-------|------|-------------|----------|
 |recipient| `{email: string}` | Para quem o email será enviado | `true` |
 |message| `{body: string, from: string, subject: string}` | Corpo do email que será enviado | `true` |
-| externalId | `string` | Id de referência para identificar uma mensagem no COM-service | `false` | 
+| externalId | `string` | Id de referência para identificar uma mensagem no COM-service | `false` |
+| scheduleTo | `Date` | data para envio da mensagem | `false` |
+| replyingTo | `string` | Id de uma mensagem que está sendo respondida | `false` |
+
+### SMS
+
+SMS recebe um objeto de configurações com as seguintes propriedades:
+
+| field | type | description | required |
+|-------|------|-------------|----------|
+|recipient| `{phone: string}` | Para quem a SMS será enviada | `true` |
+|message| `{prefix?: string, suffix?: string, text: string, variables?: {[string]: string}}` | Corpo da SMS que será enviada | `true` |
+| externalId | `string` | Id de referência para identificar uma mensagem no COM-service | `false` |
+| scheduleTo | `Date` | data para envio da mensagem | `false` |
+| replyingTo | `string` | Id de uma mensagem que está sendo respondida | `false` |
+
+as SMSs podem ser encurtadas chamando o método `shortify` antes do seu envio
+
+```ts
+const sms = new SMS({...})
+sms.shortify()
+client.dispatch(sms)
+```
+
+É importante notar que ao chamar o método shortify, é necessário ter uma variável `link` na mensagem
+
+### Whatsapp
+
+O whatsapp recebe um objeto de configurações com as seguintes propriedades:
+
+| field | type | description | required |
+|-------|------|-------------|----------|
+|recipient| `{phone: string}` | Para quem a mensagem será enviada | `true` |
+|message| `{ type: 'text'; text: string } \| { type: 'template'; template: string; fields: Record<string, string> }` | Corpo da mensagem que será enviada | `true` |
+| externalId | `string` | Id de referência para identificar uma mensagem no COM-service | `false` |
+| scheduleTo | `Date` | data para envio da mensagem | `false` |
+| replyingTo | `string` | Id de uma mensagem que está sendo respondida | `false` |
