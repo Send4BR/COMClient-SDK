@@ -25,7 +25,7 @@ export type TemplateCreated = {
 
 export type TemplateUpdated = {
   id: string;
-  status: 'approved' | 'submitted' | 'negated';
+  status: 'approved' | 'submitted' | 'rejected';
 };
 
 export type MessageReceived = {
