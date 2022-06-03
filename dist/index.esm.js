@@ -150,17 +150,29 @@ var SMSShortify = class {
       this.text = this.text.slice(0, this.calculateSlice(char));
       return { text: this.text, prefix: this.prefix, suffix: this.suffix };
     }
-    this.text = this.link ? this.text.replace(this.LINK_VARIABLE, this.link) : this.text;
+    this.text = this.replacedText;
     return { text: this.text, prefix: this.prefix, suffix: this.suffix };
   }
   calculateSlice(char) {
     return char - ((this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.RESERVED_SPACE_FORMAT);
   }
   createSuffix() {
-    this.suffix = this.link ? `${this.SEE_MORE} ${this.link}${this.suffix ? ` ${this.suffix}` : ""}` : void 0;
+    if (!this.link)
+      return;
+    const complement = `${this.SEE_MORE} ${this.link}`;
+    if (!this.suffix) {
+      this.suffix = complement;
+      return;
+    }
+    this.suffix = `${complement} ${this.suffix}`;
+  }
+  get replacedText() {
+    if (!this.link)
+      return this.text;
+    return this.text.replace(this.LINK_VARIABLE, this.link);
   }
   get messageSize() {
-    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.text.length + (this.link?.length ?? 0);
+    return (this.prefix?.length ?? 0) + (this.suffix?.length ?? 0) + this.replacedText.length;
   }
 };
 

@@ -235,7 +235,6 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/smsshortify' {
       prefix?: string;
       text: string;
       suffix?: string;
-      variables?: string;
       link?: string;
   };
   export class SMSShortify {
@@ -254,6 +253,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/service/smsshortify' {
       };
       private calculateSlice;
       private createSuffix;
+      private get replacedText();
       private get messageSize();
   }
   export {};
@@ -290,8 +290,8 @@ declare module '@aftersale/comclient-sdk/lib/infra/senders/sender-factory' {
   import { MessageServiceBusSender } from '@aftersale/comclient-sdk/lib/infra/senders/service-bus/message';
   import { SenderOptions } from '@aftersale/comclient-sdk/lib/infra/senders/types/sender-options';
   export default class SenderFactory {
-      static senders: (typeof MessageServiceBusSender | typeof FakerMessageSender)[];
-      static create(provider: string, connectionString: string, options?: SenderOptions): MessageServiceBusSender | FakerMessageSender;
+      static senders: (typeof FakerMessageSender | typeof MessageServiceBusSender)[];
+      static create(provider: string, connectionString: string, options?: SenderOptions): FakerMessageSender | MessageServiceBusSender;
   }
 
 }
@@ -330,6 +330,10 @@ declare module '@aftersale/comclient-sdk/test/domain/service/client.spec' {
 
 }
 declare module '@aftersale/comclient-sdk/test/domain/service/internal-client.spec' {
+  export {};
+
+}
+declare module '@aftersale/comclient-sdk/test/domain/service/smsshortify.spec' {
   export {};
 
 }
