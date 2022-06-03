@@ -42,7 +42,7 @@ tap.test('Should get raw suffix if link is not passed', (t) => {
 
 tap.test('Should create see more suffix if suffix is not passed', (t) => {
   const { suffix } = new SMSShortify({
-    text: '! O pacote 1 está em transferência e em breve estará a caminho de outra cidade. Acompanhe as próximas atualizações pela interface $link',
+    text: 'Muito bom! O pacote 1 está em transferência e em breve estará a caminho de outra cidade. Acompanhe as próximas atualizações pela interface $link',
     link: 'https://go.after.sale/abcdefg'
   }).execute()
 
