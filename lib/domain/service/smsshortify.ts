@@ -40,7 +40,14 @@ export class SMSShortify {
 
   private createSuffix() {
     if (!this.link) return
-    this.suffix = `${this.SEE_MORE} ${this.link}${this.suffix ? ` ${this.suffix}` : ''}`
+    const complement = `${this.SEE_MORE} ${this.link}`
+
+    if (!this.suffix) {
+      this.suffix = complement
+      return
+    }
+
+    this.suffix = `${complement} ${this.suffix}`
   }
 
   private get replacedText() {
