@@ -34,5 +34,7 @@ export class COMClient {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions)
 
     await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE)
+
+    return message.id
   }
 }

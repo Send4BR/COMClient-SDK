@@ -136,12 +136,22 @@ var COMClient = class {
   async dispatch(message) {
     const sender = SenderFactory.create(this.provider, this.connectionString, this.senderOptions);
     await sender.dispatch({ ...message.getMessage(), origin: this.origin, clientId: this.clientId }, this.MESSAGE_QUEUE);
+    return message.id;
+  }
+};
+
+// lib/domain/entities/message/message.ts
+var import_crypto = __toESM(require("crypto"));
+var Message = class {
+  constructor() {
+    this.id = import_crypto.default.randomUUID();
   }
 };
 
 // lib/domain/entities/message/email.ts
-var Email = class {
+var Email = class extends Message {
   constructor({ message, recipient, externalId, scheduledTo, replyingTo }) {
+    super();
     this.channel = "email";
     this.externalId = externalId;
     this.message = message;
@@ -151,6 +161,7 @@ var Email = class {
   }
   getMessage() {
     return {
+      id: this.id,
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
@@ -204,8 +215,9 @@ var SMSShortify = class {
 };
 
 // lib/domain/entities/message/sms.ts
-var SMS = class {
+var SMS = class extends Message {
   constructor({ message, recipient, externalId, scheduledTo, replyingTo }) {
+    super();
     this.channel = "sms";
     this.externalId = externalId;
     this.message = this.normalize(message);
@@ -224,6 +236,7 @@ var SMS = class {
   getMessage() {
     this.format();
     return {
+      id: this.id,
       externalId: this.externalId,
       message: {
         text: this.text
@@ -287,7 +300,7 @@ var SMS = class {
 };
 
 // lib/domain/entities/message/whatsapp.ts
-var Whatsapp = class {
+var Whatsapp = class extends Message {
   constructor({
     message,
     recipient,
@@ -295,6 +308,7 @@ var Whatsapp = class {
     scheduledTo,
     replyingTo
   }) {
+    super();
     this.channel = "whatsapp";
     this.externalId = externalId;
     this.message = message;
@@ -304,6 +318,7 @@ var Whatsapp = class {
   }
   getMessage() {
     return {
+      id: this.id,
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,
