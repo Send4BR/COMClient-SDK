@@ -42,7 +42,9 @@ tap.test('should send a email message using fake provider', async (t) => {
 
   const message = new Email(emailTest)
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
+
+  t.equal(id, message.id)
   t.equal(FakerMessageSender.messages.length, 1)
   t.match(FakerMessageSender.messages[0], message.getMessage())
   t.end()
@@ -59,7 +61,9 @@ tap.test('should send a email message using fake provider with cc', async (t) =>
 
   const message = new Email({ ...emailTest, message: { ...emailTest.message, cc: ['test@test.com'] } })
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
+
+  t.equal(id, message.id)
   t.equal(FakerMessageSender.messages.length, 1)
   t.match(FakerMessageSender.messages[0], message.getMessage())
   t.equal((FakerMessageSender.messages[0] as {
@@ -91,8 +95,9 @@ tap.test('should send a SMS message using fake provider', async (t) => {
 
   message.shortify()
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
 
+  t.equal(id, message.id)
   t.equal(FakerMessageSender.messages.length, 1)
   t.equal(
     (FakerMessageSender.messages[0] as SMSData).message.text,
@@ -126,7 +131,7 @@ tap.test('should send a SMS message using fake provider with schedule', async (t
 
   message.shortify()
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
 
   t.equal(FakerMessageSender.messages.length, 1)
   t.equal(
@@ -134,7 +139,7 @@ tap.test('should send a SMS message using fake provider with schedule', async (t
     'Loja da Ana: E isso ai Como a gente achou que ia ser A vida tao simples e boa Qu ... Veja mais em: https://lojadaana.delivery.after.sale/order/1234 PEDIDO #1234'
   )
   t.equal((FakerMessageSender.messages[0] as SMSData).scheduledTo, date.toISOString())
-
+  t.equal(id, message.id)
   t.end()
 })
 
@@ -149,7 +154,9 @@ tap.test('should send a whatsapp text message using fake provider', async (t) =>
 
   const message = new Whatsapp(whatsappTextTest as WhatsappData)
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
+
+  t.equal(id, message.id)
   t.equal(FakerMessageSender.messages.length, 1)
   t.match(FakerMessageSender.messages[0], message.getMessage())
   t.end()
@@ -166,7 +173,9 @@ tap.test('should send whatsapp message replying to other', async (t) => {
 
   const message = new Whatsapp({ ...whatsappTextTest, replyingTo: '1234' } as WhatsappData)
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
+
+  t.equal(id, message.id)
   t.equal(FakerMessageSender.messages.length, 1)
   t.match(FakerMessageSender.messages[0], message.getMessage())
   t.end()
@@ -183,7 +192,9 @@ tap.test('should send a whatsapp template message using fake provider', async (t
 
   const message = new Whatsapp(whatsappTemplateTest as WhatsappData)
 
-  await client.dispatch(message)
+  const id = await client.dispatch(message)
+
+  t.equal(id, message.id)
   t.equal(FakerMessageSender.messages.length, 1)
   t.match(FakerMessageSender.messages[0], message.getMessage())
   t.end()

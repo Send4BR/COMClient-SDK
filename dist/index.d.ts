@@ -19,7 +19,7 @@ declare module '@aftersale/comclient-sdk/lib/application/service/client' {
       private readonly connectionString;
       private senderOptions?;
       constructor({ environment, provider, connectionString, origin, clientId, options }: ClientParams);
-      dispatch(message: Email | SMS | Whatsapp): Promise<void>;
+      dispatch(message: Email | SMS | Whatsapp): Promise<string>;
   }
   export {};
 
@@ -91,7 +91,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
-  export class Email implements Message {
+  export class Email extends Message {
       readonly channel: string;
       readonly externalId?: string;
       readonly message: MessageType;
@@ -100,6 +100,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
       readonly replyingTo?: string;
       constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>);
       getMessage(): {
+          id: string;
           channel: string;
           externalId: string | undefined;
           recipient: RecipientType;
@@ -118,12 +119,14 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/message' {
       scheduledTo?: Date;
       replyingTo?: string;
   };
-  export interface Message {
+  export abstract class Message {
       externalId?: string;
       replyingTo?: string;
       channel?: string;
       scheduledTo?: string;
-      getMessage(): Partial<Omit<MessageData, 'scheduledTo'>> & {
+      id: string;
+      constructor();
+      abstract getMessage(): Partial<Omit<MessageData, 'scheduledTo'>> & {
           scheduledTo?: string;
       };
   }
@@ -144,7 +147,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
-  export class SMS implements Message {
+  export class SMS extends Message {
       readonly channel: string;
       readonly externalId?: string;
       readonly scheduledTo?: string;
@@ -154,6 +157,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/sms' {
       readonly replyingTo?: string;
       constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>);
       getMessage(): {
+          id: string;
           externalId: string | undefined;
           message: {
               text: string;
@@ -198,7 +202,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       message: MessageType;
       recipient: RecipientType;
   } & MessageData;
-  export class Whatsapp implements Message {
+  export class Whatsapp extends Message {
       readonly channel: string;
       readonly externalId?: string;
       readonly message: MessageType;
@@ -207,6 +211,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/whatsapp' {
       readonly replyingTo?: string;
       constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<WhatsappData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>);
       getMessage(): {
+          id: string;
           channel: string;
           externalId: string | undefined;
           recipient: RecipientType;
