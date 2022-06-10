@@ -16,7 +16,7 @@ type EmailData = {
   recipient: RecipientType
 } & MessageData
 
-export class Email implements Message {
+export class Email extends Message {
   readonly channel: string = 'email'
   readonly externalId?: string
   readonly message: MessageType
@@ -25,6 +25,7 @@ export class Email implements Message {
   readonly replyingTo?: string
 
   constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
+    super()
     this.externalId = externalId
     this.message = message
     this.recipient = recipient
@@ -34,6 +35,7 @@ export class Email implements Message {
 
   getMessage() {
     return {
+      id: this.id,
       channel: this.channel,
       externalId: this.externalId,
       recipient: this.recipient,

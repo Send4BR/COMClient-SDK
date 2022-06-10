@@ -19,7 +19,7 @@ export type SMSData = {
   recipient: RecipientType;
 } & MessageData;
 
-export class SMS implements Message {
+export class SMS extends Message {
   readonly channel: string = 'sms'
   readonly externalId?: string
   readonly scheduledTo?: string
@@ -29,6 +29,7 @@ export class SMS implements Message {
   readonly replyingTo?: string
 
   constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<SMSData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
+    super()
     this.externalId = externalId
     this.message = this.normalize(message)
     this.recipient = recipient
@@ -48,6 +49,7 @@ export class SMS implements Message {
     this.format()
 
     return {
+      id: this.id,
       externalId: this.externalId,
       message: {
         text: this.text

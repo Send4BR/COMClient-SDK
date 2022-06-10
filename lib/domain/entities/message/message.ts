@@ -1,3 +1,5 @@
+import crypto from 'crypto'
+
 export type MessageData = {
   externalId?: string;
   channel: string;
@@ -5,11 +7,16 @@ export type MessageData = {
   replyingTo?: string
 }
 
-export interface Message {
-   externalId?: string
-   replyingTo?: string
-   channel?: string
-   scheduledTo?: string
+export abstract class Message {
+  externalId?: string
+  replyingTo?: string
+  channel?: string
+  scheduledTo?: string
+  id: string
 
-   getMessage(): Partial<Omit<MessageData, 'scheduledTo'>> & {scheduledTo?: string}
+  constructor() {
+    this.id = crypto.randomUUID()
+  }
+
+  abstract getMessage(): Partial<Omit<MessageData, 'scheduledTo'>> & {scheduledTo?: string}
 }
