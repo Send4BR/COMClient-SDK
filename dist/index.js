@@ -150,7 +150,13 @@ var Message = class {
 
 // lib/domain/entities/message/email.ts
 var Email = class extends Message {
-  constructor({ message, recipient, externalId, scheduledTo, replyingTo }) {
+  constructor({
+    message,
+    recipient,
+    externalId,
+    scheduledTo,
+    replyingTo
+  }) {
     super();
     this.channel = "email";
     this.externalId = externalId;

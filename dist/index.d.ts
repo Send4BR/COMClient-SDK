@@ -78,11 +78,18 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
 }
 declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
   import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
-  type MessageType = {
+  type HTML = {
+      body: string;
+  };
+  type Template = {
+      template: string;
+      fields: Record<string, string>;
+  };
+  type MessageType = (HTML | Template) & {
       from: string;
       subject: string;
-      body: string;
       cc?: string[];
+      unsubscriptionId?: number;
   };
   type RecipientType = {
       email: string;
