@@ -1,8 +1,8 @@
 import { Message, MessageData } from './message'
 
-type HTML = { body: string; subject: string }
+type HTML = { type: 'html'; body: string; subject: string }
 
-type Template = { template: string; fields: Record<string, string> }
+type Template = { type: 'template'; templateId: string; fields: Record<string, string> }
 
 type MessageType = (HTML | Template) & {
   from: string
