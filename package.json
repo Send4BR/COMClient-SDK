@@ -24,29 +24,29 @@
   },
   "homepage": "https://github.com/Send4BR/COMClient-SDK#readme",
   "devDependencies": {
-    "@types/node": "^17.0.21",
-    "@types/tap": "^15.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.13.0",
-    "esbuild": "^0.14.25",
-    "eslint": "^8.10.0",
+    "@types/node": "^18.11.4",
+    "@types/tap": "^15.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "esbuild": "^0.15.12",
+    "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-promise": "^6.1.1",
     "husky": "^7.0.4",
-    "lint-staged": "^12.3.5",
-    "npm-dts": "^1.3.11",
+    "lint-staged": "^12.5.0",
+    "npm-dts": "^1.3.12",
     "prettier": "^2.7.1",
-    "tap": "^15.1.6",
-    "ts-node": "^10.6.0",
-    "typescript": "^4.6.2"
+    "tap": "^16.3.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@azure/service-bus": "^7.5.0",
-    "normalize-text": "^2.4.0",
-    "pino": "^7.9.2"
+    "@azure/service-bus": "^7.7.2",
+    "normalize-text": "^2.4.1",
+    "pino": "^8.7.0"
   }
 }
