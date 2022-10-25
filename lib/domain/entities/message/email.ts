@@ -1,14 +1,17 @@
 import { Message, MessageData } from './message'
 
-type MessageType = {
-  from: string,
-  subject: string,
-  body: string,
+type HTML = { type: 'html'; body: string; subject: string }
+
+type Template = { type: 'template'; templateId: string; fields: Record<string, string> }
+
+type MessageType = (HTML | Template) & {
+  from: string
   cc?: string[]
-};
+  unsubscriptionId?: number
+}
 
 type RecipientType = {
-    email: string
+  email: string
 }
 
 type EmailData = {
@@ -24,7 +27,13 @@ export class Email extends Message {
   readonly scheduledTo?: string
   readonly replyingTo?: string
 
-  constructor({ message, recipient, externalId, scheduledTo, replyingTo }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
+  constructor({
+    message,
+    recipient,
+    externalId,
+    scheduledTo,
+    replyingTo
+  }: Pick<EmailData, 'message' | 'recipient' | 'externalId' | 'scheduledTo' | 'replyingTo'>) {
     super()
     this.externalId = externalId
     this.message = message

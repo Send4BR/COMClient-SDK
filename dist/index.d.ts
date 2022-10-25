@@ -78,11 +78,20 @@ declare module '@aftersale/comclient-sdk/lib/application/service/internal-client
 }
 declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
   import { Message, MessageData } from '@aftersale/comclient-sdk/lib/domain/entities/message/message';
-  type MessageType = {
-      from: string;
-      subject: string;
+  type HTML = {
+      type: 'html';
       body: string;
+      subject: string;
+  };
+  type Template = {
+      type: 'template';
+      templateId: string;
+      fields: Record<string, string>;
+  };
+  type MessageType = (HTML | Template) & {
+      from: string;
       cc?: string[];
+      unsubscriptionId?: number;
   };
   type RecipientType = {
       email: string;
@@ -357,6 +366,7 @@ declare module '@aftersale/comclient-sdk/test/entities/message/whatsapp.spec' {
 declare module '@aftersale/comclient-sdk/test/fixtures/email' {
   const _default: {
       message: {
+          type: "html";
           body: string;
           from: string;
           subject: string;
