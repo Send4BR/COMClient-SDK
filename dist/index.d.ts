@@ -86,7 +86,7 @@ declare module '@aftersale/comclient-sdk/lib/domain/entities/message/email' {
   type Template = {
       type: 'template';
       templateId: string;
-      fields: Record<string, string>;
+      fields: Record<string, unknown>;
   };
   type MessageType = (HTML | Template) & {
       from: string;
